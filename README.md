@@ -2,7 +2,7 @@
 
 It is an API for real state appraisal
 
-#  Instalation 
+#  Installation 
 
 Use the Maven to install API.
 
