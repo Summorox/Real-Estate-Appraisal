@@ -19,6 +19,7 @@ target/
 # IDE files
 .DS_Store
 .idea
+*.iml
 *.ctxt
 .project
 .metadata
