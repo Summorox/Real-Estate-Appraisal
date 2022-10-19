@@ -3,13 +3,13 @@ package pt.ipp.isep.model;
 
 import java.util.List;
 
-public class RealState {
+public class RealEstate {
 
     private String id;
 
-    private Integer realStateType;
+    private RealEstateType realStateType;
 
-    private Integer condition;
+    private Condition condition;
 
     private Double dependentGrossArea;
 
@@ -23,7 +23,7 @@ public class RealState {
 
     private String address;
 
-    private String postalCode;
+    private PostalCode postalCode;
 
     private String clientValue;
 
