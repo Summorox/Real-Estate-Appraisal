@@ -4,8 +4,8 @@ public class PostalCode {
 
     private Integer id;
 
-    private String suxCode;
+    private String prefixCode;
 
-    private String posCode;
+    private String suffixCode;
 
 }
