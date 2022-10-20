@@ -7,15 +7,15 @@
 
 :- assertz(sampleSize(3)).
 
-:- assertz(depByYear(0.005)).
+:- assertz(depByYear(-0.005)).
 
 :- assertz(aprecByParkSlot(0.025)).
 
 :- assertz(aprecByBathRoom(0.01)).
 
 extra(id,desc,perc).
-
-energyCert(id,perc).
+ 
+energyCert("A2",0.01).
 
 postalCode(pref,sufix).
 
@@ -32,47 +32,51 @@ estate(5,"Apartment","New",124,"T3",1979,"A2",1,2,"Rua K",[4400,140],15000,[]).
 
 evaluation(1,1).
 
-/*FALTA FAZER*/
-gera_facto:.
+getMultiplier(Mode,Perc,Multiplier):-
+    (Mode == "Appreciate" ->    
+            Multiplier is 1+Perc;
+            Multiplier is 1-Perc).
 
-evaluateComponent(Value,Desc,FinalValue,Element,Mode):-    
+generate_facts(Estate,Element,Value,FinalValue,"Appreciate"):-
+    Difference is FinalValue-Value,
+    generate_facts2(Estate,Element,Difference).
+generate_facts(_,_,_,_,_).
+
+
+generate_facts2(Estate,Element,Difference).
+
+evaluateComponent(Estate,Value,Desc,FinalValue,Element,Mode):-    
     (Element == "Condition" ->
-        condition(Desc,perc),
-        (Mode == "Appreciate" ->    
-            Multiplier is 1+perc;
-            Multiplier is 1-perc);
-        energyCert(Desc,perc)        
-        (Mode == "Appreciate" ->    
-            Multiplier is 1+RoomValue;
-            Multiplier is 1-RoomValue)),    
-    FinalValue is Multiplier*Value.
-
-evaluateConstYear(Value,ConstYear,FinalValue,Mode):-
+        condition(Desc,Perc);
+        energyCert(Desc,Perc)),        
+    getMultiplier(Mode,Perc,Multiplier),            
+    FinalValue is Multiplier*Value,
+    generate_facts(Estate,Element,Value,FinalValue,Mode).
+    
+evaluateConstYear(Estate,Value,ConstYear,FinalValue,Mode):-
     currYear(CurrYear),
     depByYear(DepYear),
-    (Mode == "Appreciate" ->
-        Multiplier is 1-DepYear;
-        Multiplier is 1+DepYear),
+    getMultiplier(Mode,DepYear,Multiplier),
     DiffYears is CurrYear-ConstYear,
     potencia(Multiplier,DiffYears,Res),
-    FinalValue is Res*Value.
+    FinalValue is Res*Value,
+    generate_facts(Estate,"YearsDeprec",Value,FinalValue,Mode).
 
-evaluateSpots(Value,Number,FinalValue,Element,Mode):-
+
+evaluateSpots(Estate,Value,Number,FinalValue,Element,Mode):-
     (Element == "Park" ->
-        aprecByParkSlot(ParkValue),
-        (Mode == "Appreciate" ->    
-            Multiplier is 1+ParkValue;
-            Multiplier is 1-ParkValue);
-        aprecByBathRoom(RoomValue),
-        (Mode == "Appreciate" ->    
-            Multiplier is 1+RoomValue;
-            Multiplier is 1-RoomValue)),    
+        aprecByParkSlot(Perc);
+        aprecByBathRoom(Perc)),
+    getMultiplier(Mode,Perc,Multiplier),
     potencia(Multiplier,Number,Res),
-    FinalValue is Res*Value.
+    FinalValue is Res*Value,
+    generate_facts(Estate,Element,Value,FinalValue,Mode).
+
 
 /*FALTA FAZER*/
-evaluateExtras(Value,Extras,FinalValue).
+evaluateExtras(Estate,Value5,ListaExtras,FinalValue,Mode).
 
+potencia(_,0,1).
 potencia(X,1,X).
 potencia(Base,Potencia,Res):-
     Potencia2 is Potencia - 1,
@@ -80,14 +84,17 @@ potencia(Base,Potencia,Res):-
     Res is Res2 * Base.
 
 
-evaluate(Estate,BaseValue,Mode,FinalValue):-
-    estate(Estate,_,Condition,_,_,ConstYear,EnergyCert,ParkSlots,RoomValue,_,_,Value,ListaExtras),
-    evaluateConstYear(Value,ConstYear,Value1,Mode),
-    evaluateSpots(Value1,ParkSlots,Value2,"Park",Mode),
-    evaluateSpots(Value2,RoomValue,Value3,"NBath",Mode),
-    evaluateComponent(Value3,Condition,Value4,"Condition",Mode),    
-    evaluateComponent(Value4,EnergyCert,Value5,"EnergyCert",Mode),
-    evaluateExtras(Value5,ListaExtras,FinalValue,Mode).
+evaluate(Estate,BaseValue,FinalValue):-
+    (BaseValue == 0 -> 
+    Mode = "Depreciated";
+    Mode = "Appreciated"),
+    estate(Estate,_,Condition,_,_,ConstYear,EnergyCert,ParkSlots,BathRooms,_,_,Value,ListaExtras),
+    evaluateConstYear(Estate,Value,ConstYear,Value1,Mode),
+    evaluateSpots(Estate,Value1,ParkSlots,Value2,"Park",Mode),
+    evaluateSpots(Estate,Value2,BathRooms,Value3,"NBath",Mode),
+    evaluateComponent(Estate,Value3,Condition,Value4,"Condition",Mode),    
+    evaluateComponent(Estate,Value4,EnergyCert,FinalValue,"EnergyCert",Mode).
+/*  evaluateExtras(Estate,Value5,ListaExtras,FinalValue,Mode).*/
 
 get_average(List,Average):-
     sum( List, Sum ),
