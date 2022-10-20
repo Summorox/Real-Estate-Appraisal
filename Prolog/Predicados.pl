@@ -1,8 +1,8 @@
 :- dynamic sampleSize/1.
-:- dynamic depreciationByYear/1
+:- dynamic depreciationByYear/1.
 :- dynamic aprecByParkSlot/1.
 
-//vai definir o tamanho da amostra//
+/vai definir o tamanho da amostra/
 :- assertz(sampleSize(5)).
 
 //vai definir o valor de depreciação por cada ano apos a construção//
@@ -69,7 +69,11 @@ evaluate(estate,BaseValue, "appreciate").
 evaluate(estate,BaseValue, "depreciate").
 
 /com a lista dos valores bases da amostra vai calcular uma media/
-get_average(Values,Average).
+get_average(List,Average):-
+    sum( List, Sum ),
+    length( List, Length ),
+    Length > 0, 
+    Average is Sum / Length.
 
 //vai chamar o predicado "evaluate", mas desta vez em modo de Apreciação//
 applicate_rules(Estate,Average,FinalValue).
