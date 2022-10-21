@@ -2,6 +2,7 @@
 :- dynamic depByYear/1.
 :- dynamic aprecByParkSlot/1.
 :- dynamic currYear/1.
+:- dynamic appreciation/3.
 
 :- assertz(currYear(2022)).
 
@@ -23,7 +24,8 @@ condition("Normal",0).
 condition("New",0.05).
 condition("Renovated",0.02).
 condition("Old",-0.05).
-
+rules("Garden",0.05).
+rules("Pool",0.07).
 estate(1,"Apartment","New",117,"T3",1970,"A2",0,2,"Rua X",[4400,130],15000,["Pool","Terrace"]).
 estate(2,"Apartment","New",123,"T3",1978,"A2",1,2,"Rua T",[4400,121],15000,[]).
 estate(3,"Apartment","New",103,"T3",1974,"A2",3,2,"Rua Y",[4400,130],15000,[]).
@@ -43,7 +45,8 @@ generate_facts(Estate,Element,Value,FinalValue,"Appreciate"):-
 generate_facts(_,_,_,_,_).
 
 
-generate_facts2(Estate,Element,Difference).
+generate_facts2(Estate,Element,Difference):-
+    assertz(appreciation(Estate,Element,Difference)).
 
 evaluateComponent(Estate,Value,Desc,FinalValue,Element,Mode):-    
     (Element == "Condition" ->
@@ -72,9 +75,13 @@ evaluateSpots(Estate,Value,Number,FinalValue,Element,Mode):-
     FinalValue is Res*Value,
     generate_facts(Estate,Element,Value,FinalValue,Mode).
 
-
-/*FALTA FAZER*/
-evaluateExtras(Estate,Value5,ListaExtras,FinalValue,Mode).
+evaluateExtras(_,X,[],X,_).
+evaluateExtras(Estate,Value,[T|L],FinalValue2,Mode):-
+    evaluateExtras2(Estate,Value,L,FinalValue,Mode),
+    rules(T,Perc),
+    getMultiplier(Mode,Perc,Multiplier),
+    FinalValue2 is FinalValue*Multiplier,
+    generate_facts(Estate,T,FinalValue,FinalValue2,Mode).
 
 potencia(_,0,1).
 potencia(X,1,X).
@@ -86,15 +93,15 @@ potencia(Base,Potencia,Res):-
 
 evaluate(Estate,BaseValue,FinalValue):-
     (BaseValue == 0 -> 
-    Mode = "Depreciated";
-    Mode = "Appreciated"),
+    Mode = "Depreciate";
+    Mode = "Appreciate"),
     estate(Estate,_,Condition,_,_,ConstYear,EnergyCert,ParkSlots,BathRooms,_,_,Value,ListaExtras),
     evaluateConstYear(Estate,Value,ConstYear,Value1,Mode),
     evaluateSpots(Estate,Value1,ParkSlots,Value2,"Park",Mode),
     evaluateSpots(Estate,Value2,BathRooms,Value3,"NBath",Mode),
     evaluateComponent(Estate,Value3,Condition,Value4,"Condition",Mode),    
-    evaluateComponent(Estate,Value4,EnergyCert,FinalValue,"EnergyCert",Mode).
-/*  evaluateExtras(Estate,Value5,ListaExtras,FinalValue,Mode).*/
+    evaluateComponent(Estate,Value4,EnergyCert,Value5,"EnergyCert",Mode).
+    evaluateExtras(Estate,Value5,ListaExtras,FinalValue,Mode).
 
 get_average(List,Average):-
     sum( List, Sum ),
@@ -109,23 +116,23 @@ sum([H|L],Sum):-
     
 box(Box,[Box]). 
    
-teste(X,Lista):-member(X,Lista).   
-
 arranca_motor:-
-    evaluation(N,Estate),
-    get_sample(Estate,Sample).
+    evaluation(_,Estate),
+    get_sample(Estate,Sample),
+    get_average(Sample,Average),
+    evaluate(Estate,Average,FinalValue)
+    
 
 get_sample(Estate,Sample):-
     estate(Estate,EstateType,_,_,Tipology,_,_,_,_,_,PostalCode,_,_),
     findSamples(EstateType,Tipology,PostalCode,Sample,[],1,1).
 
-incDev2(YDev,YDev2):-(YDev>0 -> YDev2 is YDev+1;YDev2 is YDev-1).
-incDev(YDev,Final):-teste(YDev,Temp),Final is Temp*(0-1).
+incDev(YDev,YDev2):-(YDev>0 -> YDev2 is YDev+1;YDev2 is YDev-1).
 
-findSamples(_,_,_,Sample,Result,XDev,YDev):- length(Result, Length), Length == 5, Sample is Result.
-findSamples(EstateType,Tipology,[Prefix,Sufix],_,Result,_,_):-
+findSamples(_,_,_,Sample,Result,_,_):- length(Result, Length), Length == 5, Sample is Result.
+findSamples(EstateType,Tipology,[Prefix,Sufix],_,Result,XDev,YDev):-
     estate(Estate,EstateType,_,_,Tipology,_,_,_,_,_,[Prefix,Sufix],_,_),
-    !member(Estate,Result),
+    not(member(Estate,Result)),
     box(Estate,ListA),
     append([Result, ListA], List),
     findSamples(EstateType,Tipology,[Prefix,Sufix],_,List,XDev,YDev).
@@ -133,16 +140,19 @@ findSamples(EstateType,Tipology,[Prefix,Sufix],_,Result,_,_):-
 findSamples(EstateType,Tipology,[Prefix,Sufix],_,Result,XDev,YDev):-
     Sufix2 is Sufix+YDev,
     estate(Estate,EstateType,_,_,Tipology,_,_,_,_,_,[Prefix,Sufix2],_,_),
-    !member(Estate,Result),
+    not(member(Estate,Result)),
     box(Estate,ListA),
     append([Result, ListA], List),
     incDev(YDev,YDev2), 
     findSamples(EstateType,Tipology,[Prefix,Sufix],_,List,XDev,YDev2).
 
 findSamples(EstateType,Tipology,[Prefix,Sufix],_,Result,XDev,YDev):-
+    YDev2 == 500
+
+findSamples(EstateType,Tipology,[Prefix,Sufix],_,Result,XDev,YDev):-
     Prefix2 is Prefix+XDev,
     estate(Estate,EstateType,_,_,Tipology,_,_,_,_,_,[Prefix2,_],_,_),
-    !member(Estate,Result),
+    not(member(Estate,Result)),
     box(Estate,ListA),
     append([Result, ListA], List),
     incDev(XDev,XDev2), 
