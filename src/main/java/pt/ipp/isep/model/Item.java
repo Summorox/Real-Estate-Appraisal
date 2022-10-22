@@ -20,4 +20,8 @@ public class Item {
     private String description;
 
     private Double appreciationPercentage;
+
+    private Integer groupId;
+
+    private String groupName;
 }

@@ -2,12 +2,11 @@ package pt.ipp.isep.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pt.ipp.isep.model.Item;
 import pt.ipp.isep.service.ItemService;
+
+import java.util.List;
 
 
 @AllArgsConstructor
@@ -29,4 +28,8 @@ public class ItemController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping
+    public ResponseEntity<List<Item>> findAllByGroupId(@RequestParam  Integer groupId) {
+        return ResponseEntity.ok(service.findAllByGroupId(groupId));
+    }
 }

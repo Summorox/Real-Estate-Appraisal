@@ -7,6 +7,8 @@ import pt.ipp.isep.model.ApiException;
 import pt.ipp.isep.model.Item;
 import pt.ipp.isep.repository.ItemRepository;
 
+import java.util.List;
+
 @AllArgsConstructor
 @Service
 public class ItemService {
@@ -22,5 +24,9 @@ public class ItemService {
             throw new ApiException("Not found the item", HttpStatus.NOT_FOUND);
         }
         repository.save(item);
+    }
+
+    public List<Item> findAllByGroupId(Integer groupId) {
+        return repository.findAllByGroupId(groupId);
     }
 }
