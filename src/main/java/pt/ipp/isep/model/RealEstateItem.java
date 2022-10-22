@@ -9,8 +9,6 @@ public class RealEstateItem {
 
     private Integer id;
 
-    private String description;
-
-    private Double appreciationPercentage;
+    private Item item;
 
 }
