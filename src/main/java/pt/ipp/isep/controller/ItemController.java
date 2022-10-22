@@ -3,6 +3,7 @@ package pt.ipp.isep.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ipp.isep.model.Item;
@@ -22,8 +23,10 @@ public class ItemController {
         return ResponseEntity.ok().build();
     }
 
+    @PutMapping
     public ResponseEntity<Void> update(Item item) {
         service.update(item);
         return ResponseEntity.noContent().build();
     }
+
 }

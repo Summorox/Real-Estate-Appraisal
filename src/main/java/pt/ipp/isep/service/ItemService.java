@@ -1,7 +1,9 @@
 package pt.ipp.isep.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import pt.ipp.isep.model.ApiException;
 import pt.ipp.isep.model.Item;
 import pt.ipp.isep.repository.ItemRepository;
 
@@ -17,7 +19,7 @@ public class ItemService {
 
     public void update(Item item) {
         if (!repository.existsById(item.getId())) {
-            //TODO Add APIException
+            throw new ApiException("Not found the item", HttpStatus.NOT_FOUND);
         }
         repository.save(item);
     }
