@@ -20,7 +20,7 @@ global java.util.List controlSet;
 rule "will execute per each RealState having ID"
 no-loop
 when
-	RealEstate ( id != null, $extraList : extraList )
+	RealEstate ( id != null, $extraList :  realEstateItemList )
 then
 	controlSet.addAll($extraList);
 end
