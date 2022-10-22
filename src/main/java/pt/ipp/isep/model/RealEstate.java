@@ -1,10 +1,8 @@
 package pt.ipp.isep.model;
 
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 
@@ -15,8 +13,6 @@ public class RealEstate {
     private String id;
 
     private RealEstateType realStateType;
-
-    private Condition condition;
 
     private Double dependentGrossArea;
 
@@ -34,6 +30,6 @@ public class RealEstate {
 
     private String clientValue;
 
-    private List<Extra> extraList;
+    private List<RealEstateItem> realEstateItemList;
 
 }

@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class Extra {
+public class RealEstateItem {
 
     private Integer id;
 
