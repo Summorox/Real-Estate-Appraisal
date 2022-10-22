@@ -1,5 +1,8 @@
 package pt.ipp.isep.model;
 
+import lombok.Getter;
+
+@Getter
 public enum Condition {
 
     BAD(1, "Bad"),

@@ -1,5 +1,10 @@
 package pt.ipp.isep.model;
 
+import lombok.Builder;
+import lombok.Getter;
+
+@Getter
+@Builder
 public class Evaluation {
 
     private Integer id;

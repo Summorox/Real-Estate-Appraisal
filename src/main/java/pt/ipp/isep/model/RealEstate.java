@@ -1,8 +1,15 @@
 package pt.ipp.isep.model;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
+@Getter
+@Builder
 public class RealEstate {
 
     private String id;

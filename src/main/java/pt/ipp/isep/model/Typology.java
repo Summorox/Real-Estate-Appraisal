@@ -1,5 +1,9 @@
 package pt.ipp.isep.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
 public enum Typology {
 
     T0(0,"studio"),
@@ -18,11 +22,4 @@ public enum Typology {
     private Integer id;
     private String description;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
 }

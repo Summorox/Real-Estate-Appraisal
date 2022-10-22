@@ -1,5 +1,8 @@
 package pt.ipp.isep.model;
 
+import lombok.Getter;
+
+@Getter
 public enum BussinessQuality {
 
     BAD(1, "Bad"),
