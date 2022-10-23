@@ -5,7 +5,7 @@
 :- dynamic appreciation/3.
 :- dynamic tempList/1.
 :- dynamic flag/1.
-:- dynamic deal/5.
+:- dynamic deal/6.
 :- dynamic estate/14.
 :- dynamic postalCodeList/2.
 
@@ -31,19 +31,19 @@ condition("Normal",0).
 condition("New",0.05).
 condition("Renovated",0.02).
 condition("Old",-0.05).
-rules("Garden",0.05).
-rules("Pool",0.07).
-rules("Terrace",0.04).
-estate(1,"Apartment","New",117,"T3",1970,"A2",0,2,"Rua X",[4400,130],15000,["Pool","Terrace"],"Evaluated").
+rules("garden",0.05).
+rules("pool",0.07).
+rules("terrace",0.04).
+estate(1,"Apartment","New",117,"T3",1970,"A2",0,2,"Rua X",[4400,130],15000,["Pool","Terrace"],"Not_Evaluated").
 estate(2,"Apartment","New",123,"T3",1978,"A2",1,2,"Rua T",[4400,121],10000,["Garden"],"Evaluated").
 estate(3,"Apartment","New",103,"T3",1974,"A2",3,2,"Rua Y",[4400,130],12000,[],"Evaluated").
 estate(4,"Apartment","New",133,"T3",1972,"A2",2,2,"Rua U",[4400,133],16000,[],"Evaluated").
-estate(5,"Apartment","New",124,"T3",1979,"A2",1,2,"Rua K",[4400,140],12000,[],"Not_Evaluated").
-deal(1,15000,16000,1.06,"Average").
-deal(2,10000,15500,1.55,"Very Good").
-deal(3,12000,8000,0.66,"Bad").
-deal(4,16000,16500,1.06,"Average").
-/*deal(5,12000,13500,1,12."Average").*/
+estate(5,"Apartment","New",124,"T3",1979,"A2",1,2,"Rua K",[4400,140],12000,[],"Evaluated").
+/*deal(1,15000,16000,1.06,"Average").*/
+deal(2,0,10000,15500,1.55,"Very Good").
+deal(3,0,12000,8000,0.66,"Bad").
+deal(4,0,16000,16500,1.06,"Average").
+deal(5,0,12000,13500,1,12."Average").
 businessQuality([0,0.25],"Very Awful").
 businessQuality([0.25,0.5],"Awful").
 businessQuality([0.5,0.8],"Bad").
@@ -54,11 +54,44 @@ businessQuality([1.5,1.8],"Excelent").
 businessQuality([1.8,99],"Exceptional").
 evaluation(1,1).
 
+/*predicado que imprime os factos para cada imovel avaliado*/
+getData(Estate,List):-
+    appreciation(Estate,Element,Value),
+    not(member(Element,List)), 
+    (Value == 0.0 -> 
+    box(Element,Box),
+    append([Box,List],NewList),
+    getData(Estate,NewList);
+    write('- because of the  '),write(Element),
+    (Value>0 -> 
+    write(' ,the estate value increased by ');
+    write(' ,the estate value decreased by ')),
+    write(Value),nl,
+    box(Element,Box),
+    append([Box,List],NewList),
+    getData(Estate,NewList)).
+getData(_,_).
+
+/*predicado de explicações do porque*/
+how(Estate):-
+    deal(Estate,0,_,_,_,_),
+    write('The real estate nº'),write(Estate),write(' was already known!').
+how(Estate):-
+    deal(Estate,BaseValue,ClientValue,EstimatedValue,_,Quality),
+    write('The real estate numero '),write(Estate),write(' was estimated in '),
+    write(EstimatedValue),write(', because based on the started value '),
+    write(BaseValue),write(' we applied the following rules:'),nl,getData(Estate,[]),
+    write('Making the calculations, we estimated '),write(EstimatedValue),nl,
+    write('According to the value required by the client ('),write(ClientValue),
+    write(') and the estimated value calculated before, we rate this deal as '),write(Quality).
+
 /*metodo que vai buscar o multiplicador para cada avaliação*/
 getMultiplier(Mode,Perc,Multiplier):-
     (Mode == "Appreciate" ->    
             Multiplier is 1+Perc;
             Multiplier is 1-Perc).
+
+test(Number,Number2):-Number2 = format('~2f', [Number]).
 
 /*metodo que vai verificar se é para gerar factos ou não*/
 generate_facts(Estate,Element,Value,FinalValue,"Appreciate"):-
@@ -72,7 +105,7 @@ generate_facts2(Estate,Element,Difference):-
 
 /*metodo que vai avaliar um imovel pela sua condição e certificado energetico*/
 evaluateComponent(Estate,Value,Desc,FinalValue,Element,Mode):-    
-    (Element == "Condition" ->
+    (Element == "house condition" ->
         condition(Desc,Perc);
         energyCert(Desc,Perc)),        
     getMultiplier(Mode,Perc,Multiplier),            
@@ -87,11 +120,11 @@ evaluateConstYear(Estate,Value,ConstYear,FinalValue,Mode):-
     DiffYears is CurrYear-ConstYear,
     potencia(Multiplier,DiffYears,Res),
     FinalValue is Res*Value,
-    generate_facts(Estate,"YearsDeprec",Value,FinalValue,Mode).
+    generate_facts(Estate,"years depreciation",Value,FinalValue,Mode).
 
 /*metodo que vai avaliar um imovel pelo seu numero de quartos de banho e lugares de estacionamento*/
 evaluateSpots(Estate,Value,Number,FinalValue,Element,Mode):-
-    (Element == "Park" ->
+    (Element == "number of parking slots" ->
         aprecByParkSlot(Perc);
         aprecByBathRoom(Perc)),
     getMultiplier(Mode,Perc,Multiplier),
@@ -120,10 +153,10 @@ potencia(Base,Potencia,Res):-
 evaluate(Estate,BaseValue,FinalValue,Mode):-
     estate(Estate,_,Condition,_,_,ConstYear,EnergyCert,ParkSlots,BathRooms,_,_,_,ListaExtras,_),
     evaluateConstYear(Estate,BaseValue,ConstYear,Value1,Mode),
-    evaluateSpots(Estate,Value1,ParkSlots,Value2,"Park",Mode),
-    evaluateSpots(Estate,Value2,BathRooms,Value3,"NBath",Mode),
-    evaluateComponent(Estate,Value3,Condition,Value4,"Condition",Mode),    
-    evaluateComponent(Estate,Value4,EnergyCert,Value5,"EnergyCert",Mode),
+    evaluateSpots(Estate,Value1,ParkSlots,Value2,"number of parking slots",Mode),
+    evaluateSpots(Estate,Value2,BathRooms,Value3,"number of bathrooms",Mode),
+    evaluateComponent(Estate,Value3,Condition,Value4,"house condition",Mode),    
+    evaluateComponent(Estate,Value4,EnergyCert,Value5,"energy certfication",Mode),
     evaluateExtras(Estate,Value5,ListaExtras,FinalValue,Mode).
 
 /*vai calcular a media dos valores apos depreciação dos imoveis*/
@@ -143,7 +176,7 @@ getDepreciatedValues([T|L],[H|R]):-
 
 /*metodo de depreciação de um imovel*/
 depreciate(Estate,Value):-
-    deal(Estate,_,EvaluationValue,_,_),
+    deal(Estate,_,_,EvaluationValue,_,_),
     evaluate(Estate,EvaluationValue,Value,"Depreciate").
 
 /*soma todos os elementos de uma lista*/
@@ -171,7 +204,7 @@ changeState(Estate):-
 resetFlag:-
     retract(flag(_)),
     asserta(flag("decrementa")).
-    
+
 /*adiciona o codigo Postal ao grupo do respetivo prefixo*/
 addPostal(Prefixo,Sufixo):-
     postalCodeList(Prefixo,List),
@@ -195,7 +228,7 @@ arranca_motor2(List):-
     get_average(Sample,Average),
     evaluate(Estate,Average,FinalValue,"Appreciate"),
     qualify_deal(ClientValue,FinalValue,Perc,Quality),
-    assertz(deal(Estate,ClientValue,FinalValue,Perc,Quality)),
+    assertz(deal(Estate,Average,ClientValue,FinalValue,Perc,Quality)),
     changeState(Estate),
     resetFlag,
     box(Estate,ListBox),
