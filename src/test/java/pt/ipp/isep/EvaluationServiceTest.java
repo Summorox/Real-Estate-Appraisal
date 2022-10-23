@@ -1,0 +1,220 @@
+package pt.ipp.isep;
+
+import lombok.extern.slf4j.Slf4j;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.kie.api.KieServices;
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import pt.ipp.isep.model.*;
+import pt.ipp.isep.repository.ItemRepository;
+import pt.ipp.isep.repository.PropertyRepository;
+import pt.ipp.isep.sample.Property;
+import pt.ipp.isep.service.EvaluationService;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Slf4j
+public class EvaluationServiceTest {
+
+    static final Logger LOG = LoggerFactory.getLogger(EvaluationServiceTest.class);
+    PropertyRepository propertyRepository;
+    ItemRepository itemRepository;
+    EvaluationService service;
+
+    Evaluation evaluation;
+
+    @BeforeEach
+    public void init() {
+        propertyRepository = mock(PropertyRepository.class);
+        itemRepository = mock(ItemRepository.class);
+        List<Item> items1 = new ArrayList<>();
+        List<Item> items2 = new ArrayList<>();
+        List<Item> items3 = new ArrayList<>();
+        items1.add(new Item(1,"Pool",0.07,1,"Pool"));
+        items2.add(new Item(2,"Garden",0.05,2,"Garden"));
+        items3.add(new Item(3,"Bad",-0.05,3,"Condition"));
+        items3.add(new Item(4,"Fair",0.00,3,"Condition"));
+        items3.add(new Item(5,"Good",0.05,3,"Condition"));
+
+        when(itemRepository.findAllByGroupId(1)).thenReturn(items1);
+        when(itemRepository.findAllByGroupId(2)).thenReturn(items2);
+        when(itemRepository.findAllByGroupId(3)).thenReturn(items3);
+
+        service = new EvaluationService(propertyRepository,itemRepository,14000);
+
+
+
+        RealEstateItem item1 = RealEstateItem.builder()
+                .id(1)
+                .item(new Item(1,"Pool",0.07,1,"Pool"))
+                .build();
+
+        RealEstateItem item2 = RealEstateItem.builder()
+                .id(2)
+                .item(new Item(2,"Garden",0.05,2,"Garden"))
+                .build();
+
+        RealEstateItem item3 = RealEstateItem.builder()
+                .id(2)
+                .item(new Item(3,"Bad",-0.05,3,"Condition"))
+                .build();
+
+        ArrayList<RealEstateItem> list1 = new ArrayList<>();
+        list1.add(item1);
+        list1.add(item2);
+        list1.add(item3);
+
+
+        RealEstate testEstate= RealEstate.
+                builder().
+                id("123").
+                realEstateType(RealEstateType.APARTMENT)
+                .dependentGrossArea(123.00)
+                .typology(Typology.T1)
+                .constructionYear(2000)
+                .parkingSlot(2)
+                .numberBathrooms(1)
+                .address("Rua xx, Lordelo de Ouro")
+                .postalCode(PostalCode.builder().
+                        prefixCode("1450")
+                        .suffixCode("479")
+                        .build())
+                .clientValue(15000)
+                .realEstateItemList(list1)
+                .build();
+
+        evaluation = Evaluation.builder()
+                .realEstate(testEstate)
+                .appraiseValue(15000)
+                .build();
+    }
+
+    @Test
+    public void testAveragePriceCalculation() {
+
+        ArrayList<Property> properties = new ArrayList<Property>();
+        properties.add(Property.builder()
+                        .id(1L)
+                        .price(13000.00)
+                        .typology(Typology.T1)
+                        .postalCode(PostalCode.builder().prefixCode("1450").suffixCode("479").build())
+                .build());
+
+        properties.add(Property.builder()
+                .id(2L)
+                .price(17000.00)
+                .typology(Typology.T1)
+                .postalCode(PostalCode.builder().prefixCode("1450").suffixCode("479").build())
+                .build());
+
+        properties.add(Property.builder()
+                .id(3L)
+                .price(15500.00)
+                .typology(Typology.T1)
+                .postalCode(PostalCode.builder().prefixCode("1450").suffixCode("479").build())
+                .build());
+
+        properties.add(Property.builder()
+                .id(4L)
+                .price(16000.00)
+                .typology(Typology.T1)
+                .postalCode(PostalCode.builder().prefixCode("1450").suffixCode("479").build())
+                .build());
+
+        properties.add(Property.builder()
+                .id(5L)
+                .price(14000.00)
+                .typology(Typology.T1)
+                .postalCode(PostalCode.builder().prefixCode("1450").suffixCode("479").build())
+                .build());
+
+
+        long result = service.calculateAveragePrice(properties);
+        long expected = 15100L;
+        assertEquals(expected,result);
+    }
+
+    @Test
+    public void testCalculateBusinessQuality() {
+
+        BussinessQuality result = service.calculateBusinessQuality(this.evaluation);
+        BussinessQuality expected = BussinessQuality.FAIR;
+        assertEquals(expected,result);
+
+        evaluation.setAppraiseValue(12000);
+        result = service.calculateBusinessQuality(evaluation);
+        expected = BussinessQuality.BAD;
+        assertEquals(expected,result);
+
+        evaluation.setAppraiseValue(18000);
+        result = service.calculateBusinessQuality(evaluation);
+        expected = BussinessQuality.GOOD;
+        assertEquals(expected,result);
+    }
+
+    @Test
+    public void testAppraiseConstructionYear() {
+
+
+        long result = service.appraiseConstructionYear(2000,15000);
+        long expected = 13538L;
+        assertEquals(expected,result);
+
+    }
+
+    @Test
+    public void testAppraiseParkingSlots() {
+
+
+        long result = service.appraiseParkingSlots(2,15000);
+        long expected = 15709L;
+        assertEquals(expected,result);
+
+    }
+
+    @Test
+    public void testAppraiseBathrooms() {
+
+
+        long result = service.appraiseBathrooms(1,15000);
+        long expected = 15350L;
+        assertEquals(expected,result);
+
+    }
+
+    @Test
+    public void testAppraiseItem() {
+
+
+        long result = service.appraiseItem(RealEstateItem.builder()
+                .id(1)
+                .item(new Item(1,"Pool",0.07,1,"Pool"))
+                .build(),15000);
+        long expected = 15980L;
+        assertEquals(expected,result);
+
+        result = service.appraiseItem(RealEstateItem.builder()
+                .id(2)
+                .item(new Item(2,"Garden",0.05,2,"Garden"))
+                .build(),15000);
+        expected = 15700L;
+        assertEquals(expected,result);
+
+        result = service.appraiseItem(RealEstateItem.builder()
+                .id(3)
+                .item(new Item(3,"Bad",-0.05,3,"Condition"))
+                .build(),15000);
+        expected = 14300L;
+        assertEquals(expected,result);
+
+    }
+}
