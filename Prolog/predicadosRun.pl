@@ -72,6 +72,29 @@ getData(Estate,List):-
     getData(Estate,NewList)).
 getData(_,_).
 
+why_not(Estate,Quality):-
+    deal(Estate,_,_,_,_,Quality),
+    write('The real estate business is already rated as '),write(Quality).
+why_not(Estate,Quality):-
+    deal(Estate,_,_,_,Perc,Quality2),
+    businessQuality([Lower,Upper],Quality),
+    write('The real estate business was rated as '),write(Quality2),
+    write(' ,because the real estate estimate value is '),
+    Temp is (Perc-1),Temp2 is abs(Temp)*100,write(Temp2),
+    (Temp>0 -> write('% above the client required value');
+    write('% below the client required value')),nl,
+    write('For it to be rate as a '),write(Quality),
+    write(' business, the estimated value should be between '),
+    Temp3 is (Lower-1),
+    (Temp3>0 -> 
+    Temp4 is abs(Temp3)*100,write(Temp4),write('% and '),
+    Temp5 is (Upper-1),Temp6 is abs(Temp5)*100,write(Temp6),
+    write('% above the client required value');
+    Temp4 is Lower*100,Temp5 is Upper*100,
+    write(Temp4),write('% and '),write(Temp5),
+    write('% below the client required value')).
+
+
 /*predicado de explicações do porque*/
 how(Estate):-
     deal(Estate,0,_,_,_,_),
@@ -90,8 +113,6 @@ getMultiplier(Mode,Perc,Multiplier):-
     (Mode == "Appreciate" ->    
             Multiplier is 1+Perc;
             Multiplier is 1-Perc).
-
-test(Number,Number2):-Number2 = format('~2f', [Number]).
 
 /*metodo que vai verificar se é para gerar factos ou não*/
 generate_facts(Estate,Element,Value,FinalValue,"Appreciate"):-
