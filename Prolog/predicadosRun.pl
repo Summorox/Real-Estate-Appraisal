@@ -7,6 +7,7 @@
 :- dynamic flag/1.
 :- dynamic deal/5.
 :- dynamic estate/14.
+:- dynamic postalCodeList/2.
 
 :- assertz(currYear(2022)).
 
@@ -24,7 +25,7 @@ extra(id,desc,perc).
  
 energyCert("A2",0.01).
 
-tempList(4400,[130,121,133,140]).
+postalCodeList(4400,[130,121,133,140]).
 
 condition("Normal",0).
 condition("New",0.05).
@@ -170,14 +171,26 @@ changeState(Estate):-
 resetFlag:-
     retract(flag(_)),
     asserta(flag("decrementa")).
+    
+/*adiciona o codigo Postal ao grupo do respetivo prefixo*/
+addPostal(Prefixo,Sufixo):-
+    postalCodeList(Prefixo,List),
+    not(member(Sufixo,List)),
+    box(Sufixo,Box),
+    append([Box,List],NList),
+    sort(NList,NewList),
+    retract(postalCodeList(Prefixo,List)),
+    assertz(postalCodeList(Prefixo,NewList)).
+addPostal(_,_).
 
 /*predicado principal*/
 arranca_motor:-
     arranca_motor2([]).
 /*predicado que corre para avaliar cada imovel que ainda esta por avaliar*/
 arranca_motor2(List):-
-    estate(Estate,_,_,_,_,_,_,_,_,_,_,ClientValue,_,"Not_Evaluated"),
+    estate(Estate,_,_,_,_,_,_,_,_,_,[Prefixo,Sufixo],ClientValue,_,"Not_Evaluated"),
     not(member(Estate,List)),
+    addPostal(Prefixo,Sufixo),
     get_sample(Estate,Sample),
     get_average(Sample,Average),
     evaluate(Estate,Average,FinalValue,"Appreciate"),
@@ -200,7 +213,7 @@ takeOutFirst([_|L],L).
 /*passado um determinado id de um imovel, vai retornar uma amostra com as mesmas caracteristicas*/
 get_sample(Estate,Sample):-
     estate(Estate,EstateType,_,_,Tipology,_,_,_,_,_,[Prefix,Sufix],_,_,_),
-    tempList(Prefix,List),
+    postalCodeList(Prefix,List),
     pos(Sufix,List,1,Position),
     box(Estate,BoxList),
     findSamples(EstateType,Tipology,[Prefix,Sufix],Sample,BoxList,1,1,List,Position).
