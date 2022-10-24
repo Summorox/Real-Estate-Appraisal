@@ -21,6 +21,8 @@ public class Evaluation {
 
     private long appraiseValue;
 
+    private long baseValue;
+
     private BussinessQuality bussinessQuality;
 
 }

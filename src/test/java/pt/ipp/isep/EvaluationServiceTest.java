@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kie.api.KieServices;
@@ -48,7 +47,7 @@ public class EvaluationServiceTest {
         when(itemRepository.findAllByGroupId(2)).thenReturn(items2);
         when(itemRepository.findAllByGroupId(3)).thenReturn(items3);
 
-        service = new EvaluationService(propertyRepository,itemRepository,14000);
+        service = new EvaluationService(propertyRepository,itemRepository);
 
 
 
@@ -94,6 +93,7 @@ public class EvaluationServiceTest {
         evaluation = Evaluation.builder()
                 .realEstate(testEstate)
                 .appraiseValue(15000)
+                .baseValue(14000)
                 .build();
     }
 
@@ -164,8 +164,8 @@ public class EvaluationServiceTest {
     public void testAppraiseConstructionYear() {
 
 
-        long result = service.appraiseConstructionYear(2000,15000);
-        long expected = 13538L;
+        long result = service.appraiseConstructionYear(2000,14000);
+        long expected = -1462L;
         assertEquals(expected,result);
 
     }
@@ -174,8 +174,8 @@ public class EvaluationServiceTest {
     public void testAppraiseParkingSlots() {
 
 
-        long result = service.appraiseParkingSlots(2,15000);
-        long expected = 15709L;
+        long result = service.appraiseParkingSlots(2,14000);
+        long expected = 709L;
         assertEquals(expected,result);
 
     }
@@ -184,8 +184,8 @@ public class EvaluationServiceTest {
     public void testAppraiseBathrooms() {
 
 
-        long result = service.appraiseBathrooms(1,15000);
-        long expected = 15350L;
+        long result = service.appraiseBathrooms(1,14000);
+        long expected = 350L;
         assertEquals(expected,result);
 
     }
@@ -197,22 +197,22 @@ public class EvaluationServiceTest {
         long result = service.appraiseItem(RealEstateItem.builder()
                 .id(1)
                 .item(new Item(1,"Pool",0.07,1,"Pool"))
-                .build(),15000);
-        long expected = 15980L;
+                .build(),14000);
+        long expected = 980L;
         assertEquals(expected,result);
 
         result = service.appraiseItem(RealEstateItem.builder()
                 .id(2)
                 .item(new Item(2,"Garden",0.05,2,"Garden"))
-                .build(),15000);
-        expected = 15700L;
+                .build(),14000);
+        expected = 700L;
         assertEquals(expected,result);
 
         result = service.appraiseItem(RealEstateItem.builder()
                 .id(3)
                 .item(new Item(3,"Bad",-0.05,3,"Condition"))
-                .build(),15000);
-        expected = 14300L;
+                .build(),14000);
+        expected = -700L;
         assertEquals(expected,result);
 
     }

@@ -11,7 +11,7 @@
 
 :-consult('system').
 
-:- http_handler('/real_estate',start_system,[]).
+:- http_handler('/real_estate_prolog',start_system,[]).
 
 start_server:-
     http_server(http_dispatch, [port(45000)]).

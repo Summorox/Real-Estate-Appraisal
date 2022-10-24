@@ -92,6 +92,7 @@ public class DroolsTest {
         Evaluation evaluation = Evaluation.builder()
                 .realEstate(testEstate)
                 .appraiseValue(15000)
+                .baseValue(15000)
                 .build();
 
         Evaluation expectedEvaluation = Evaluation.builder()
@@ -100,12 +101,12 @@ public class DroolsTest {
                 .build();
 
         EvaluationService service = mock(EvaluationService.class);
-        when(service.appraiseConstructionYear(2000,15000)).thenReturn(13434L);
-        when(service.appraiseParkingSlots(2,13434L)).thenReturn(14114L);
-        when(service.appraiseBathrooms(1,14114L)).thenReturn(14467L);
-        when(service.appraiseItem(item1,14467L)).thenReturn(15480L);
-        when(service.appraiseItem(item2,15480L)).thenReturn(16254L);
-        when(service.appraiseItem(item3,16254L)).thenReturn(15441L);
+        when(service.appraiseConstructionYear(2000,15000)).thenReturn(-1462L);
+        when(service.appraiseParkingSlots(2,15000)).thenReturn(709L);
+        when(service.appraiseBathrooms(1,15000)).thenReturn(350L);
+        when(service.appraiseItem(item1,15000L)).thenReturn(980L);
+        when(service.appraiseItem(item2,15000L)).thenReturn(700L);
+        when(service.appraiseItem(item3,15000L)).thenReturn(-700L);
         kieSession.setGlobal("evaluationService", service);
 
 
@@ -118,13 +119,13 @@ public class DroolsTest {
         Evaluation finalEvaluation = evaluationReturned.iterator().next();
         assertEquals( 1, evaluationReturned.size());
         Mockito.verify(service, times(1)).appraiseConstructionYear(2000,15000);
-        Mockito.verify(service, times(1)).appraiseParkingSlots(2,13434L);
-        Mockito.verify(service, times(1)).appraiseBathrooms(1,14114L);
-        Mockito.verify(service, times(1)).appraiseItem(item1,14467L);
-        Mockito.verify(service, times(1)).appraiseItem(item2,15480L);
-        Mockito.verify(service, times(1)).appraiseItem(item3,16254L);
+        Mockito.verify(service, times(1)).appraiseParkingSlots(2,15000L);
+        Mockito.verify(service, times(1)).appraiseBathrooms(1,15000L);
+        Mockito.verify(service, times(1)).appraiseItem(item1,15000L);
+        Mockito.verify(service, times(1)).appraiseItem(item2,15000L);
+        Mockito.verify(service, times(1)).appraiseItem(item3,15000L);
         assertEquals( 2, kieSession.getObjects().size());
-        assertEquals(15441L,finalEvaluation.getAppraiseValue());
+        assertEquals(15577L,finalEvaluation.getAppraiseValue());
 
         kieSession.dispose();
 
