@@ -57,25 +57,38 @@ public class EvaluationService {
         kieSession.dispose();
 
         Evaluation finalEvaluation = evaluationReturned.iterator().next();
+        finalEvaluation.setPercQuality(calculateQualityPercentage(finalEvaluation));
         finalEvaluation.setBussinessQuality(calculateBusinessQuality(finalEvaluation));
         How.addEvaluation(realEstate.getId(),finalEvaluation);
+
+        //How
         System.out.println(How.getExplanationById(realEstate.getId()));
 
         return finalEvaluation;
     }
 
+    public long calculateQualityPercentage(Evaluation finalEvaluation) {
+        long clientValue = finalEvaluation.getRealEstate().getClientValue();
+        return Math.round(((clientValue - finalEvaluation.getAppraiseValue()) * 100) / clientValue);
+    }
+
     public BussinessQuality calculateBusinessQuality(Evaluation evaluation) {
-        long clientValue = evaluation.getRealEstate().getClientValue();
-        float result = 0;
-        result = ((clientValue - evaluation.getAppraiseValue()) * 100) / clientValue;
-        if (result <= 5 && result >= -5) {
+        long result = evaluation.getPercQuality();
+        System.out.println(result);
+        if (result < 20 && result > -20) {
             return BussinessQuality.FAIR;
         }
-        if(result < -5){
+        if(result >= 20 && result <50){
+            return BussinessQuality.BAD;
+        }
+        if(result >= 50){
+            return BussinessQuality.AWFUL;
+        }
+        if(result <= -20 && result >-50){
             return BussinessQuality.GOOD;
         }
         else{
-            return BussinessQuality.BAD;
+            return BussinessQuality.EXCELLENT;
         }
 
     }

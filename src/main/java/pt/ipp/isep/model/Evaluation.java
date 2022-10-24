@@ -23,6 +23,8 @@ public class Evaluation {
 
     private long baseValue;
 
+    private long percQuality;
+
     private BussinessQuality bussinessQuality;
 
 }
