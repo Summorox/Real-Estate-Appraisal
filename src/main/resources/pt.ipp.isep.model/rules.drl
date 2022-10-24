@@ -13,14 +13,70 @@
  * limitations under the License.
 */
 
-package pt.ipp.isep.model;
+package rules
+import pt.ipp.isep.model.RealEstate;
+import pt.ipp.isep.model.Evaluation;
+import java.util.Calendar;
+import pt.ipp.isep.service.EvaluationService
+import pt.ipp.isep.model.RealEstateItem;
+import function pt.ipp.isep.utility.utility.helper;
+global EvaluationService evaluationService;
 
-global java.util.List controlSet;
+function int currentYear(){
+  return Calendar.getInstance().get(Calendar.YEAR);
+}
 
-rule "will execute per each RealState having ID"
-no-loop
+
+rule "r1: Value of the property should depreciate per year"
+lock-on-active true
 when
-	RealEstate ( id != null, $extraList :  realEstateItemList )
+    $realEstate: RealEstate()
+    eval($realEstate.getConstructionYear() < currentYear())
+	$evaluation: Evaluation()
 then
-	controlSet.addAll($extraList);
+    long calculatedAppraisal = evaluationService.appraiseConstructionYear($realEstate.getConstructionYear(), $evaluation.getAppraiseValue());
+    $evaluation.setAppraiseValue(calculatedAppraisal);
+    helper(drools,String.valueOf(currentYear()));
+    helper(drools,String.valueOf($evaluation.getAppraiseValue()));
+    update($evaluation);
+end
+
+rule "r2: Value of the property should appreciate per parking spot"
+lock-on-active true
+when
+	$realEstate: RealEstate(parkingSlot > 0)
+	$evaluation: Evaluation()
+then
+    long calculatedAppraisal = evaluationService.appraiseParkingSlots($realEstate.getParkingSlot(),
+    $evaluation.getAppraiseValue());
+    $evaluation.setAppraiseValue(calculatedAppraisal);
+    helper(drools,String.valueOf($evaluation.getAppraiseValue()));
+    update($evaluation);
+end
+
+rule "r3: Value of the property should appreciate per bathroom"
+lock-on-active true
+when
+	$realEstate: RealEstate(numberBathrooms > 0)
+	$evaluation: Evaluation()
+then
+        long calculatedAppraisal = evaluationService.appraiseBathrooms($realEstate.getNumberBathrooms(),
+        $evaluation.getAppraiseValue());
+        $evaluation.setAppraiseValue(calculatedAppraisal);
+        helper(drools,String.valueOf($evaluation.getAppraiseValue()));
+        update($evaluation);
+end
+
+rule "r4: Value of the property should appreciate or depreciate accordingly per item that it has"
+lock-on-active true
+when
+	$realEstate: RealEstate($itemList: realEstateItemList, $itemList.size()>0)
+	$evaluation: Evaluation()
+then
+    for(RealEstateItem item: $realEstate.getRealEstateItemList()){
+        long calculatedAppraisal = evaluationService.appraiseItem(item,$evaluation.getAppraiseValue());
+        $evaluation.setAppraiseValue(calculatedAppraisal);
+        helper(drools,String.valueOf($evaluation.getAppraiseValue()));
+        update($evaluation);
+    }
 end
