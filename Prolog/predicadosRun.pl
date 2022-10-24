@@ -34,8 +34,8 @@ condition("Old",-0.05).
 rules("garden",0.05).
 rules("pool",0.07).
 rules("terrace",0.04).
-estate(1,"Apartment","New",117,"T3",1970,"A2",0,2,"Rua X",[4400,130],15000,["Pool","Terrace"],"Not_Evaluated").
-estate(2,"Apartment","New",123,"T3",1978,"A2",1,2,"Rua T",[4400,121],10000,["Garden"],"Evaluated").
+estate(1,"Apartment","New",117,"T3",1970,"A2",0,2,"Rua X",[4400,130],15000,["pool","terrace"],"Not_Evaluated").
+estate(2,"Apartment","New",123,"T3",1978,"A2",1,2,"Rua T",[4400,121],10000,["garden"],"Evaluated").
 estate(3,"Apartment","New",103,"T3",1974,"A2",3,2,"Rua Y",[4400,130],12000,[],"Evaluated").
 estate(4,"Apartment","New",133,"T3",1972,"A2",2,2,"Rua U",[4400,133],16000,[],"Evaluated").
 estate(5,"Apartment","New",124,"T3",1979,"A2",1,2,"Rua K",[4400,140],12000,[],"Evaluated").
