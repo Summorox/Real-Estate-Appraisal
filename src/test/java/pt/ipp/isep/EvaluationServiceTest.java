@@ -25,7 +25,6 @@ import java.util.List;
 @Slf4j
 public class EvaluationServiceTest {
 
-    static final Logger LOG = LoggerFactory.getLogger(EvaluationServiceTest.class);
     PropertyRepository propertyRepository;
     ItemRepository itemRepository;
     EvaluationService service;
@@ -138,7 +137,7 @@ public class EvaluationServiceTest {
                 .build());
 
 
-        long result = service.calculateAveragePrice(properties);
+        long result = Property.calculateAveragePrice(properties);
         long expected = 15100L;
         assertEquals(expected,result);
     }

@@ -1,7 +1,6 @@
 package pt.ipp.isep.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,6 +10,8 @@ import javax.persistence.Id;
 @Getter
 @Setter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class Item {
 
     @Id
@@ -25,11 +26,4 @@ public class Item {
 
     private String groupName;
 
-    public Item(Integer id, String description, Double appreciationPercentage, Integer groupId, String groupName) {
-        this.id = id;
-        this.description = description;
-        this.appreciationPercentage = appreciationPercentage;
-        this.groupId = groupId;
-        this.groupName = groupName;
-    }
 }

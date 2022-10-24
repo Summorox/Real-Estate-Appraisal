@@ -37,7 +37,7 @@ public class EvaluationService {
                         .orElseThrow(() -> new ApiException("Not found a base value for this typology and postal code", HttpStatus.NOT_FOUND)));
 
         //Calculate average price to use as base price for evaluation
-        evaluationBasePrice = calculateAveragePrice(properties);
+        evaluationBasePrice = Property.calculateAveragePrice(properties);
 
         //insert property to be evaluated
         kieSession.insert(realEstate);
@@ -59,15 +59,6 @@ public class EvaluationService {
         return finalEvaluation;
     }
 
-    public long calculateAveragePrice(List<Property> properties) {
-        double totalValue=0;
-        for(Property property: properties){
-            totalValue = totalValue+property.getPrice();
-        }
-        long averagePrice= Math.round(totalValue/properties.size());
-        return averagePrice;
-    }
-
     public BussinessQuality calculateBusinessQuality(Evaluation evaluation) {
         long clientValue = evaluation.getRealEstate().getClientValue();
         float result = 0;
@@ -87,7 +78,7 @@ public class EvaluationService {
     public long appraiseConstructionYear(int constructionYear, long appraiseValue){
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         int difference = currentYear-constructionYear;
-        double base= 1+(-0.005);
+        final double base= 1+(-0.005);
         double result = Math.pow(base, difference);
         long baseValueModifier=(Math.round(this.evaluationBasePrice*result)-this.evaluationBasePrice);
         return appraiseValue + baseValueModifier;
@@ -95,7 +86,7 @@ public class EvaluationService {
 
     public long appraiseParkingSlots(int parkingSlots, long appraiseValue){
         int exponent = parkingSlots;
-        double base= 1+(0.025);
+        final double base= 1+(0.025);
         double result = Math.pow(base, exponent);
         long baseValueModifier=(Math.round(this.evaluationBasePrice*result)-this.evaluationBasePrice);
         return appraiseValue + baseValueModifier;
@@ -103,7 +94,7 @@ public class EvaluationService {
 
     public long appraiseBathrooms(int bathrooms, long appraiseValue){
         int exponent = bathrooms;
-        double base= 1+(0.025);
+        final double base= 1+(0.025);
         double result = Math.pow(base, exponent);
         long baseValueModifier=(Math.round(this.evaluationBasePrice*result)-this.evaluationBasePrice);
         return appraiseValue + baseValueModifier;
@@ -113,15 +104,15 @@ public class EvaluationService {
         List<Item> items = itemRepository.findAllByGroupId(realEstateItem.getItem().getGroupId());
         double calculatedValue = this.evaluationBasePrice;
         if(items.size()==1){
-            double percentage = items.get(0).getAppreciationPercentage();
-            double multiplier= 1+(percentage);
+            final double percentage = items.get(0).getAppreciationPercentage();
+            final double multiplier= 1+(percentage);
             calculatedValue = calculatedValue*multiplier;
         }
         else if(items.size()>1){
             for(Item item: items){
                 if(item.getId() == realEstateItem.getItem().getId()){
-                    double percentage = item.getAppreciationPercentage();
-                    double multiplier= 1+(percentage);
+                    final double percentage = item.getAppreciationPercentage();
+                    final double multiplier= 1+(percentage);
                     calculatedValue = calculatedValue*multiplier;
                 }
             }

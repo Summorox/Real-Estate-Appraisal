@@ -7,6 +7,7 @@ import pt.ipp.isep.model.PostalCode;
 import pt.ipp.isep.model.Typology;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Entity
@@ -22,6 +23,15 @@ public class Property {
 
     @OneToOne
     private PostalCode postalCode;
+
+    public static long calculateAveragePrice(List<Property> properties) {
+        double totalValue=0;
+        for(Property property: properties){
+            totalValue = totalValue+property.getPrice();
+        }
+        long averagePrice= Math.round(totalValue/properties.size());
+        return averagePrice;
+    }
 
 
 }

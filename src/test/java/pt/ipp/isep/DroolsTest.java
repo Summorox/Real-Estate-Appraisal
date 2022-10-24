@@ -23,7 +23,6 @@ import static org.mockito.Mockito.*;
 
 @Slf4j
 public class DroolsTest {
-    static final Logger LOG = LoggerFactory.getLogger(DroolsTest.class);
 
     @Test
     public void droolsSetupTest() {
@@ -38,15 +37,10 @@ public class DroolsTest {
         KieContainer kieContainer = KieServices.Factory.get().getKieClasspathContainer();
 
         Results verifyResults = kieContainer.verify();
-        for (Message m : verifyResults.getMessages()) {
-            LOG.info("{}", m);
-        }
 
-        LOG.info("Creating kieSession");
         KieSession kieSession = kieContainer.newKieSession("rulesSession");
 
 
-        LOG.info("Creating test data");
         Item conditionItemBad = new Item(3,"Bad",-0.05,3,"Condition");
         Item conditionItemFair = new Item(4,"Fair",0.00,3,"Condition");
         Item conditionItemGood = new Item(5,"Good",0.05,3,"Condition");
@@ -105,7 +99,6 @@ public class DroolsTest {
                 .appraiseValue(15441L)
                 .build();
 
-        LOG.info("Setting up service mock");
         EvaluationService service = mock(EvaluationService.class);
         when(service.appraiseConstructionYear(2000,15000)).thenReturn(13434L);
         when(service.appraiseParkingSlots(2,13434L)).thenReturn(14114L);
@@ -116,14 +109,11 @@ public class DroolsTest {
         kieSession.setGlobal("evaluationService", service);
 
 
-
-        LOG.info("Now running data");
-
         kieSession.insert(testEstate);
         kieSession.insert(evaluation);
         kieSession.fireAllRules();
 
-        LOG.info("Final checks");
+
         Collection<Evaluation> evaluationReturned = (Collection<Evaluation>) kieSession.getObjects(new ClassObjectFilter(Evaluation.class));
         Evaluation finalEvaluation = evaluationReturned.iterator().next();
         assertEquals( 1, evaluationReturned.size());
