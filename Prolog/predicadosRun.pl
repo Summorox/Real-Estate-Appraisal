@@ -22,11 +22,9 @@
 flag("decrementa").
 
 extra(id,desc,perc).
- 
-energyCert("A2",0.01).
 
-postalCodeList(4400,[130,121,133,140]).
 
+<<<<<<< HEAD
 condition("Normal",0).
 condition("New",0.05).
 condition("Renovated",0.02).
@@ -53,6 +51,14 @@ businessQuality([1.5,1.8],"Very Good").
 businessQuality([1.5,1.8],"Excelent").
 businessQuality([1.8,99],"Exceptional").
 evaluation(1,1).
+=======
+/*predicado que carrega base conhecimento*/
+carrega_bc:-
+    write('NOME DA BASE DE CONHECIMENTO (terminar com .)-> '),
+% usar se necessario caminho absoluto com / e colocar entre plicas
+        read(NBC),
+        consult(NBC).
+>>>>>>> b1bb420 (adicionado kb.txt e ajustado predicado para leitura)
 
 /*predicado que imprime os factos para cada imovel avaliado*/
 getData(Estate,List):-
