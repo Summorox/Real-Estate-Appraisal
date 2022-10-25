@@ -1,13 +1,12 @@
 package pt.ipp.isep.explanation;
 
-import org.drools.core.util.Entry;
+import lombok.Getter;
 import pt.ipp.isep.model.BussinessQuality;
 import pt.ipp.isep.model.Evaluation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 public class How {
 
     private static HashMap<String, List<Justification>> justifications = new HashMap<>();
@@ -24,6 +23,7 @@ public class How {
 
         justificationsForId.add(justification);
         justifications.put(realEstateId,justificationsForId);
+        System.out.println(justification.toString());
     }
 
     public static void addEvaluation(String realEstateId, Evaluation evaluation){
@@ -38,14 +38,14 @@ public class How {
         StringBuilder builder = new StringBuilder();
         List<Justification> factJustifications = justifications.get(realEstateId);
         Evaluation evaluation = evaluations.get(realEstateId);
-        builder.append("The real estate number "+realEstateId+ "was estimated in " + evaluation.getAppraiseValue()
+        builder.append("The real estate number "+realEstateId+ " was estimated in " + evaluation.getAppraiseValue()
         + ",because based on the starting value " + evaluation.getBaseValue() + " we applied the following rules:" );
 
         if (factJustifications != null && !factJustifications.isEmpty() ) {
             for(Justification j : factJustifications) {
                 builder.append("\n\n\n");
                 builder.append("Because of the rule : "+ j.getRuleDesc());
-                builder.append("\n\n");
+                builder.append("\n");
                 if(j.getFact().getValue()<0){
                     builder.append("The value decreased by :");
                 }else{
@@ -86,33 +86,49 @@ public class How {
 
         builder.append("\n\n");
 
-        builder.append("For it to be rated as  " + quality + "deal:");
-        if(quality.equals(BussinessQuality.AWFUL)){
+        builder.append("For it to be rated as  " + quality + " deal:");
+        if(quality.equals(BussinessQuality.AWFUL.toString().toLowerCase())){
             builder.append("\nThe estimated value should be below ");
             builder.append(Math.round(evaluation.getAppraiseValue()*(1-0.5)));
         }
-        if(quality.equals(BussinessQuality.BAD)){
+        if(quality.equals(BussinessQuality.BAD.toString().toLowerCase())){
             builder.append("\nThe estimated value should be between ");
             builder.append(Math.round(evaluation.getAppraiseValue()*(1-0.49)));
             builder.append(" and ");
             builder.append(Math.round(evaluation.getAppraiseValue()*(1-0.20)));
         }
-        if(quality.equals(BussinessQuality.FAIR)){
+        if(quality.equals(BussinessQuality.FAIR.toString().toLowerCase())){
             builder.append("\nThe estimated value should be between ");
             builder.append(Math.round(evaluation.getAppraiseValue()*(1-0.19)));
             builder.append(" and ");
             builder.append(Math.round(evaluation.getAppraiseValue()*(1+0.19)));
         }
-        if(quality.equals(BussinessQuality.GOOD)){
+        if(quality.equals(BussinessQuality.GOOD.toString().toLowerCase())){
             builder.append("\nThe estimated value should be between ");
             builder.append(Math.round(evaluation.getAppraiseValue()*(1+0.20)));
             builder.append(" and ");
             builder.append(Math.round(evaluation.getAppraiseValue()*(1+0.49)));
         }
-        if(quality.equals(BussinessQuality.EXCELLENT)){
+        if(quality.equals(BussinessQuality.EXCELLENT.toString().toLowerCase())){
             builder.append("\nThe estimated value should be above ");
             builder.append(Math.round(evaluation.getAppraiseValue()*(1+0.50)));
         }
         return builder.toString();
+    }
+
+    public static void resetJustifications() {
+        justifications.clear();
+    }
+
+    public static void resetEvaluations() {
+        evaluations.clear();
+    }
+
+    public static HashMap<String, List<Justification>> getJustifications() {
+        return justifications;
+    }
+
+    public static HashMap<String, Evaluation> getEvaluations() {
+        return evaluations;
     }
 }
