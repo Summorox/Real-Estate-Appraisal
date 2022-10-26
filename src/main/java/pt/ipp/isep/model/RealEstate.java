@@ -12,7 +12,7 @@ public class RealEstate {
 
     private String id;
 
-    private RealEstateType realStateType;
+    private RealEstateType realEstateType;
 
     private Double dependentGrossArea;
 
@@ -28,7 +28,7 @@ public class RealEstate {
 
     private PostalCode postalCode;
 
-    private String clientValue;
+    private long clientValue;
 
     private List<RealEstateItem> realEstateItemList;
 

@@ -2,8 +2,16 @@ package pt.ipp.isep.model;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
+import pt.ipp.isep.repository.ItemRepository;
+import pt.ipp.isep.service.ItemService;
+
+import javax.persistence.Id;
+import java.util.Calendar;
+import java.util.List;
 
 @Getter
+@Setter
 @Builder
 public class Evaluation {
 
@@ -11,7 +19,9 @@ public class Evaluation {
 
     private RealEstate realEstate;
 
-    private Double appraiseValue;
+    private long appraiseValue;
+
+    private long baseValue;
 
     private BussinessQuality bussinessQuality;
 

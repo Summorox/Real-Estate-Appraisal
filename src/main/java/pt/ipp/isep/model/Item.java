@@ -9,6 +9,8 @@ import javax.persistence.Id;
 
 @Getter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class Item {
 
     @Id
@@ -22,4 +24,5 @@ public class Item {
     private Integer groupId;
 
     private String groupName;
+
 }

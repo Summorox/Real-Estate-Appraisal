@@ -13,14 +13,116 @@
  * limitations under the License.
 */
 
-package pt.ipp.isep.model;
+package rules
+import pt.ipp.isep.model.RealEstate;
+import pt.ipp.isep.model.Evaluation;
+import java.util.Calendar;
+import pt.ipp.isep.service.EvaluationService
+import pt.ipp.isep.model.RealEstateItem;
+import function pt.ipp.isep.utility.utility.helper
+import pt.ipp.isep.explanation.How
+import pt.ipp.isep.explanation.Justification
+import pt.ipp.isep.explanation.Fact;
+global EvaluationService evaluationService;
 
-global java.util.List controlSet;
+function int currentYear(){
+  return Calendar.getInstance().get(Calendar.YEAR);
+}
 
-rule "will execute per each RealState having ID"
-no-loop
+
+rule "r1: Value of the property should depreciate per year"
+lock-on-active true
 when
-	RealEstate ( id != null, $extraList :  realEstateItemList )
+    $realEstate: RealEstate()
+    eval($realEstate.getConstructionYear() < currentYear())
+	$evaluation: Evaluation()
 then
-	controlSet.addAll($extraList);
+    long modifier = evaluationService.appraiseConstructionYear($realEstate.getConstructionYear(), $evaluation.getBaseValue());
+    long calculatedValue = $evaluation.getAppraiseValue()+modifier;
+    $evaluation.setAppraiseValue(calculatedValue);
+    int age= currentYear()-$realEstate.getConstructionYear();
+    Justification j = Justification.builder()
+        .ruleDesc("r1: Value of the property should depreciate per year")
+        .fact(
+            Fact.builder()
+            .value(modifier)
+            .description("Because the property is " + age + " years old")
+            .build()
+        ).build();
+    How.addJustification($realEstate.getId(),j);
+    helper(drools,String.valueOf(currentYear()));
+    helper(drools,String.valueOf($evaluation.getAppraiseValue()));
+    helper(drools,String.valueOf(modifier));
+    update($evaluation);
+end
+
+rule "r2: Value of the property should appreciate per parking spot"
+lock-on-active true
+when
+	$realEstate: RealEstate(parkingSlot > 0)
+	$evaluation: Evaluation()
+then
+    long modifier = evaluationService.appraiseParkingSlots($realEstate.getParkingSlot(), $evaluation.getBaseValue());
+    long calculatedValue = $evaluation.getAppraiseValue()+modifier;
+    $evaluation.setAppraiseValue(calculatedValue);
+    Justification j = Justification.builder()
+            .ruleDesc("r2: Value of the property should appreciate per parking spot")
+            .fact(
+                Fact.builder()
+                .value(modifier)
+                .description("Because the property has " + $realEstate.getParkingSlot() + " parking slots")
+                .build()
+            ).build();
+        How.addJustification($realEstate.getId(),j);
+    helper(drools,String.valueOf($evaluation.getAppraiseValue()));
+    helper(drools,String.valueOf(modifier));
+    update($evaluation);
+end
+
+rule "r3: Value of the property should appreciate per bathroom"
+lock-on-active true
+when
+	$realEstate: RealEstate(numberBathrooms > 0)
+	$evaluation: Evaluation()
+then
+        long modifier = evaluationService.appraiseBathrooms($realEstate.getNumberBathrooms(),$evaluation.getBaseValue());
+        long calculatedValue = $evaluation.getAppraiseValue()+modifier;
+        $evaluation.setAppraiseValue(calculatedValue);
+         Justification j = Justification.builder()
+                    .ruleDesc("r3: Value of the property should appreciate per bathroom")
+                    .fact(
+                        Fact.builder()
+                        .value(modifier)
+                        .description("Because the property has " + $realEstate.getNumberBathrooms() + " bathrooms")
+                        .build()
+                    ).build();
+                How.addJustification($realEstate.getId(),j);
+        helper(drools,String.valueOf($evaluation.getAppraiseValue()));
+        helper(drools,String.valueOf(modifier));
+        update($evaluation);
+end
+
+rule "r4: Value of the property should appreciate or depreciate accordingly per item that it has"
+lock-on-active true
+when
+	$realEstate: RealEstate($itemList: realEstateItemList, $itemList.size()>0)
+	$evaluation: Evaluation()
+then
+    for(RealEstateItem item: $realEstate.getRealEstateItemList()){
+        long modifier = evaluationService.appraiseItem(item,$evaluation.getBaseValue());
+        long calculatedValue = $evaluation.getAppraiseValue()+modifier;
+        $evaluation.setAppraiseValue(calculatedValue);
+        Justification j = Justification.builder()
+                            .ruleDesc("r4: Value of the property should appreciate or depreciate accordingly per item that it has")
+                            .fact(
+                                Fact.builder()
+                                .value(modifier)
+                                .description("Because the property has the item: " + item.getItem().getDescription())
+                                .build()
+                            ).build();
+                        How.addJustification($realEstate.getId(),j);
+        helper(drools,String.valueOf($evaluation.getAppraiseValue()));
+        helper(drools,String.valueOf(modifier));
+        update($evaluation);
+    }
 end
