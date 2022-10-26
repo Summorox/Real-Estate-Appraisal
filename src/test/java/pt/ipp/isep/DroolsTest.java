@@ -13,7 +13,6 @@ import org.kie.api.runtime.KieContainer;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-@Slf4j
 public class DroolsTest {
 
 

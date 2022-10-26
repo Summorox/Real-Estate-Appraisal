@@ -11,7 +11,6 @@ import pt.ipp.isep.repository.PropertyRepository;
 import pt.ipp.isep.sample.Property;
 
 import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -23,8 +22,8 @@ public class EvaluationService {
 
         //First try to get properties by the typology and postal code
         //If not found, second time try to get by just prefix postal code
-        List<Property> properties = propertyRepository.findAllbyTypologyAndPostalCode(realEstate.getTypology(), realEstate.getPostalCode())
-                .orElseGet(() -> propertyRepository.findAllbyTypologyAndPostalCodePrefixCode(realEstate.getTypology(), realEstate.getPostalCode().getPrefixCode())
+        List<Property> properties = propertyRepository.findAllByTypologyAndPostalCode(realEstate.getTypology(), realEstate.getPostalCode())
+                .orElseGet(() -> propertyRepository.findAllByTypologyAndPostalCodePrefixCode(realEstate.getTypology(), realEstate.getPostalCode().getPrefixCode())
                         .orElseThrow(() -> new ApiException("Not found a base value for this typology and postal code", HttpStatus.NOT_FOUND)));
 
         //TODO Implement to call rules

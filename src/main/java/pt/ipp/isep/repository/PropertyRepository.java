@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PropertyRepository extends JpaRepository<Property, Long> {
-    Optional<List<Property>> findAllbyTypologyAndPostalCodePrefixCode(Typology typology, String prefixCode);
+    Optional<List<Property>> findAllByTypologyAndPostalCodePrefixCode(Typology typology, String prefixCode);
 
-    Optional<List<Property>> findAllbyTypologyAndPostalCode(Typology typology, PostalCode postalCode);
+    Optional<List<Property>> findAllByTypologyAndPostalCode(Typology typology, PostalCode postalCode);
 }
