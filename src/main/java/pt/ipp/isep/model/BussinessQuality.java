@@ -9,7 +9,6 @@ public enum BussinessQuality {
     BAD(2, "Bad"),
     FAIR(3, "Fair"),
     GOOD(4, "Good"),
-
     EXCELLENT(5, "Excellent");
 
 
