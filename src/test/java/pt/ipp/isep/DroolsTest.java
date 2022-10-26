@@ -21,7 +21,6 @@ import java.util.Collection;
 
 import static org.mockito.Mockito.*;
 
-@Slf4j
 public class DroolsTest {
 
     @Test
