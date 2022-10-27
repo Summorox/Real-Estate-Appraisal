@@ -61,9 +61,6 @@ public class EvaluationService {
         finalEvaluation.setBussinessQuality(calculateBusinessQuality(finalEvaluation));
         How.addEvaluation(realEstate.getId(),finalEvaluation);
 
-        //How
-        System.out.println(How.getExplanationById(realEstate.getId()));
-
         return finalEvaluation;
     }
 
@@ -74,7 +71,6 @@ public class EvaluationService {
 
     public BussinessQuality calculateBusinessQuality(Evaluation evaluation) {
         long result = evaluation.getPercQuality();
-        System.out.println(result);
         if (result < 20 && result > -20) {
             return BussinessQuality.FAIR;
         }

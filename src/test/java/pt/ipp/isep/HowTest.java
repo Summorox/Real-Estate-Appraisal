@@ -212,8 +212,6 @@ public class HowTest {
                 "According to the price determined by the client, we determine this deal as Fair";
         String actualHow = How.getExplanationById(testEstate.getId());
         assertEquals(expectedHow,actualHow);
-        How.resetEvaluations();
-        How.resetJustifications();
         kieSession.dispose();
 
     }
@@ -233,8 +231,6 @@ public class HowTest {
                 "The estimated value should be between 7944 and 12462";
         String actualWhyNot = How.getWhyNot(testEstate.getId(),"bad");
         assertEquals(expectedWhyNot,actualWhyNot);
-        How.resetEvaluations();
-        How.resetJustifications();
         kieSession.dispose();
 
     }

@@ -1,6 +1,5 @@
 package pt.ipp.isep.explanation;
 
-import lombok.Getter;
 import pt.ipp.isep.model.BussinessQuality;
 import pt.ipp.isep.model.Evaluation;
 
@@ -23,7 +22,6 @@ public class How {
 
         justificationsForId.add(justification);
         justifications.put(realEstateId,justificationsForId);
-        System.out.println(justification.toString());
     }
 
     public static void addEvaluation(String realEstateId, Evaluation evaluation){
@@ -65,7 +63,7 @@ public class How {
         return builder.toString();
     }
 
-    public static String getWhyNot(String id, String quality) {
+    public static String getWhyNot(final String id, final String quality) {
         StringBuilder builder = new StringBuilder();
         Evaluation evaluation = evaluations.get(id);
         long clientValue = Math.round(evaluation.getAppraiseValue()*(1-evaluation.getPercQuality()));

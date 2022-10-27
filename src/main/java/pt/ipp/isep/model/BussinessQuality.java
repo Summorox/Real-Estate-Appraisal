@@ -11,7 +11,6 @@ public enum BussinessQuality {
     GOOD(4, "Good"),
     EXCELLENT(5, "Excellent");
 
-
     BussinessQuality(Integer id, String description) {
         this.id = id;
         this.description = description;
