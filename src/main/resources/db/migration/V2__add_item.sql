@@ -7,8 +7,8 @@ INSERT INTO item (id, description, appreciation_percentage, group_id, group_name
 INSERT INTO item (id, description, appreciation_percentage, group_id, group_name) VALUES (6,'B', 1.005, 2, 'Energetic certificate' );
 INSERT INTO item (id, description, appreciation_percentage, group_id, group_name) VALUES (7,'C',    1, 2, 'Energetic certificate' );
 INSERT INTO item (id, description, appreciation_percentage, group_id, group_name) VALUES (8,'D', 0.99, 2, 'Energetic certificate' );
-INSERT INTO item (id, description, appreciation_percentage, group_id, group_name) VALUES (9,'E', 0.997, 2, 'Energetic certificate' );
-INSERT INTO item (id, description, appreciation_percentage, group_id, group_name) VALUES (10,'F', 0.995, 2, 'Energetic certificate' );
+INSERT INTO item (id, description, appreciation_percentage, group_id, group_name) VALUES (9,'E', 0.97, 2, 'Energetic certificate' );
+INSERT INTO item (id, description, appreciation_percentage, group_id, group_name) VALUES (10,'F', 0.95, 2, 'Energetic certificate' );
 
 INSERT INTO item (id, description, appreciation_percentage, group_id, group_name) VALUES (11,'East', 1.1, 3, 'Sun exposure' );
 INSERT INTO item (id, description, appreciation_percentage, group_id, group_name) VALUES (12,'West', 0.99, 3, 'Sun exposure' );
