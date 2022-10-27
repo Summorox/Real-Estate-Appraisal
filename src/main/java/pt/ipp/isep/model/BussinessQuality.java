@@ -5,9 +5,11 @@ import lombok.Getter;
 @Getter
 public enum BussinessQuality {
 
-    BAD(1, "Bad"),
-    FAIR(2, "Fair"),
-    GOOD(3, "Good");
+    AWFUL(1, "Awful"),
+    BAD(2, "Bad"),
+    FAIR(3, "Fair"),
+    GOOD(4, "Good"),
+    EXCELLENT(5, "Excellent");
 
     BussinessQuality(Integer id, String description) {
         this.id = id;
