@@ -13,6 +13,7 @@ import org.kie.api.runtime.KieSession;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pt.ipp.isep.explanation.How;
 import pt.ipp.isep.model.*;
 import pt.ipp.isep.service.EvaluationService;
 
@@ -127,9 +128,8 @@ public class DroolsTest {
         assertEquals(15577L,finalEvaluation.getAppraiseValue());
 
         kieSession.dispose();
-
-
-
+        How.resetEvaluations();
+        How.resetJustifications();
 
     }
 

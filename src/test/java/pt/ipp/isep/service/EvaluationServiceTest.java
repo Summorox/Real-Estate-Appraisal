@@ -139,16 +139,24 @@ public class EvaluationServiceTest {
     @Test
     public void testCalculateBusinessQuality() {
 
+        long perc = service.calculateQualityPercentage(this.evaluation);
+        evaluation.setPercQuality(perc);
         BussinessQuality result = service.calculateBusinessQuality(this.evaluation);
+        evaluation.setPercQuality(perc);
         BussinessQuality expected = BussinessQuality.FAIR;
         assertEquals(expected,result);
 
-        evaluation.setAppraiseValue(12000);
+
+        evaluation.setAppraiseValue(10000);
+        perc = service.calculateQualityPercentage(this.evaluation);
+        evaluation.setPercQuality(perc);
         result = service.calculateBusinessQuality(evaluation);
         expected = BussinessQuality.BAD;
         assertEquals(expected,result);
 
         evaluation.setAppraiseValue(18000);
+        perc = service.calculateQualityPercentage(this.evaluation);
+        evaluation.setPercQuality(perc);
         result = service.calculateBusinessQuality(evaluation);
         expected = BussinessQuality.GOOD;
         assertEquals(expected,result);
