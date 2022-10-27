@@ -1,25 +1,19 @@
-package pt.ipp.isep;
+package pt.ipp.isep.service;
 
 import lombok.extern.slf4j.Slf4j;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.kie.api.KieServices;
-import org.kie.api.runtime.KieContainer;
-import org.kie.api.runtime.KieSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pt.ipp.isep.model.*;
 import pt.ipp.isep.repository.ItemRepository;
 import pt.ipp.isep.repository.PropertyRepository;
 import pt.ipp.isep.sample.Property;
-import pt.ipp.isep.service.EvaluationService;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @Slf4j
 public class EvaluationServiceTest {
