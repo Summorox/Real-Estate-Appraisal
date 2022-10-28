@@ -25,30 +25,38 @@ start_system(Request):-
     member(method(post), Request), !,
     http_read_json_dict(Request, Input),
     format(user_output,'Request received:~p~n with body:~p~n~n',[Request,Input]),
-    (load_estate(Input),
-    arranca_motor,
-    generate_output(Output,Input) -> !,
+    (load_estate(Input,EstateId),
+    evaluateSingular(EstateId,FinalValue,Quality),
+    generate_output(Output,EstateId) -> !,
     reply_json_dict(Output);
     atom_json_dict('{"message":"Error generating output"}', Error,_),
     reply_json_dict(Error,[status([400])])).
 
 
-load_estate(Estate):-
+load_estate(Estate,Estate.id):-
 
     retractall(estate(Estate.id,_,_,_,_,_,_,_,_,_,_,_,_,_)),
     assert(estate(Estate.id,Estate.type,Estate.condition,Estate.m2,Estate.typology,Estate.year,Estate.certificate,Estate.parkSlots,Estate.bathrooms,Estate.address,Estate.zipcode,Estate.clientPrice,Estate.items,"Not_Evaluated")).
     /*Linhas abaixo foi para testar se retornava os dados direitos em json*/
     /*retractall(deal(Estate.id,_,_,_,_,_)).*/
-    /*assert(deal(Estate.id,0,15000,16000,1.06,"Average")).*/
+    /*assert(deal(Estate.id,16000,15000,0,1.06,"Average")).*/
 
 generate_output(Output,Estate):-
 	generate_output_deal(Estate,OutputDeal),
         Output = json{deal:OutputDeal}.
 
-generate_output_deal(Estate,OutputDeal):-
-    findall(json{id:Estate.id,clientPrice:ClientPriceString,evaluationPrice:EvaluationPriceString,perc:PercString,
+/*generate_output_deal(Estate,OutputDeal):-
+    format(user_output,'ISTO ESTA A DAR ~p~n ',[Estate]),
+    findall(json{id:Estate,evaluationPrice:EvaluationPriceString,quality:Quality},
+    (deal(Estate,EvaluationPrice,_,_,_,Quality),
+    atom_string(EvaluationPrice,EvaluationPriceString),
+    atom_string(Perc,PercString)),
+    OutputDeal).*/
+
+generate_output_deal(EstateId,OutputDeal):-
+    findall(json{id:EstateId,clientPrice:ClientPriceString,evaluationPrice:EvaluationPriceString,perc:PercString,
                  quality:QualityString},
-    (deal(Estate.id,_,ClientPrice,EvaluationPrice,Perc,Quality),
+    (deal(EstateId,EvaluationPrice,ClientPrice,_,Perc,Quality),
     atom_string(ClientPrice,ClientPriceString),
     atom_string(EvaluationPrice,EvaluationPriceString),
     atom_string(Perc,PercString),

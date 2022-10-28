@@ -23,42 +23,15 @@ flag("decrementa").
 
 extra(id,desc,perc).
 
+postalCodeList(4400,[130,121,133,140]).
 
-<<<<<<< HEAD
-condition("Normal",0).
-condition("New",0.05).
-condition("Renovated",0.02).
-condition("Old",-0.05).
-rules("garden",0.05).
-rules("pool",0.07).
-rules("terrace",0.04).
-estate(1,"Apartment","New",117,"T3",1970,"A2",0,2,"Rua X",[4400,130],15000,["pool","terrace"],"Not_Evaluated").
-estate(2,"Apartment","New",123,"T3",1978,"A2",1,2,"Rua T",[4400,121],10000,["garden"],"Evaluated").
-estate(3,"Apartment","New",103,"T3",1974,"A2",3,2,"Rua Y",[4400,130],12000,[],"Evaluated").
-estate(4,"Apartment","New",133,"T3",1972,"A2",2,2,"Rua U",[4400,133],16000,[],"Evaluated").
-estate(5,"Apartment","New",124,"T3",1979,"A2",1,2,"Rua K",[4400,140],12000,[],"Evaluated").
-/*deal(1,15000,16000,1.06,"Average").*/
-deal(2,0,10000,15500,1.55,"Very Good").
-deal(3,0,12000,8000,0.66,"Bad").
-deal(4,0,16000,16500,1.06,"Average").
-deal(5,0,12000,13500,1,12."Average").
-businessQuality([0,0.25],"Very Awful").
-businessQuality([0.25,0.5],"Awful").
-businessQuality([0.5,0.8],"Bad").
-businessQuality([0.8,1.2],"Average").
-businessQuality([1.2,1.5],"Good").
-businessQuality([1.5,1.8],"Very Good").
-businessQuality([1.5,1.8],"Excelent").
-businessQuality([1.8,99],"Exceptional").
-evaluation(1,1).
-=======
+
 /*predicado que carrega base conhecimento*/
 carrega_bc:-
     write('NOME DA BASE DE CONHECIMENTO (terminar com .)-> '),
 % usar se necessario caminho absoluto com / e colocar entre plicas
         read(NBC),
         consult(NBC).
->>>>>>> b1bb420 (adicionado kb.txt e ajustado predicado para leitura)
 
 /*predicado que imprime os factos para cada imovel avaliado*/
 getData(Estate,List):-
@@ -103,10 +76,10 @@ why_not(Estate,Quality):-
 
 /*predicado de explicações do porque*/
 how(Estate):-
-    deal(Estate,0,_,_,_,_),
+    deal(Estate,_,_,0,_,_),
     write('The real estate nº'),write(Estate),write(' was already known!').
 how(Estate):-
-    deal(Estate,BaseValue,ClientValue,EstimatedValue,_,Quality),
+    deal(Estate,EstimatedValue,ClientValue,BaseValue,_,Quality),
     write('The real estate numero '),write(Estate),write(' was estimated in '),
     write(EstimatedValue),write(', because based on the started value '),
     write(BaseValue),write(' we applied the following rules:'),nl,getData(Estate,[]),
@@ -203,7 +176,7 @@ getDepreciatedValues([T|L],[H|R]):-
 
 /*metodo de depreciação de um imovel*/
 depreciate(Estate,Value):-
-    deal(Estate,_,_,EvaluationValue,_,_),
+    deal(Estate,EvaluationValue,Y,X,_,_),
     evaluate(Estate,EvaluationValue,Value,"Depreciate").
 
 /*soma todos os elementos de uma lista*/
@@ -245,7 +218,26 @@ addPostal(_,_).
 
 /*predicado principal*/
 arranca_motor:-
-    arranca_motor2([]).
+    arranca_motor2([]).    
+    
+testePred(Estate,FinalValue,Quality):-
+    evaluateSingular(Estate,FinalValue,Quality).
+
+evaluateSingular(Estate,FinalValue,Quality):-
+    deal(Estate,FinalValue,_,_,_,Quality).
+
+evaluateSingular(Estate,FinalValue,Quality):-
+    estate(Estate,_,_,_,_,_,_,_,_,_,[Prefixo,Sufixo],ClientValue,_,_),
+    addPostal(Prefixo,Sufixo),
+    get_sample(Estate,Sample),
+    get_average(Sample,Average),
+    format(user_output,'ISTO ESTA A DAR ~p~n ',8),
+    evaluate(Estate,Average,FinalValue,"Appreciate"),
+    qualify_deal(ClientValue,FinalValue,Perc,Quality),
+    assertz(deal(Estate,Average,ClientValue,FinalValue,Perc,Quality)),
+    changeState(Estate),
+    resetFlag.
+
 /*predicado que corre para avaliar cada imovel que ainda esta por avaliar*/
 arranca_motor2(List):-
     estate(Estate,_,_,_,_,_,_,_,_,_,[Prefixo,Sufixo],ClientValue,_,"Not_Evaluated"),
