@@ -18,6 +18,9 @@ import static org.mockito.Mockito.when;
 @Slf4j
 public class EvaluationServiceTest {
 
+    private static final Item ITEM_1 = new Item(1, "Pool", 0.07, 1, "Pool");
+    public static final Item ITEM_2 = new Item(2, "Garden", 0.05, 2, "Garden");
+    public static final Item ITEM_3 = new Item(3, "Bad", -0.05, 3, "Condition");
     PropertyRepository propertyRepository;
     ItemRepository itemRepository;
     EvaluationService service;
@@ -28,36 +31,25 @@ public class EvaluationServiceTest {
     public void init() {
         propertyRepository = mock(PropertyRepository.class);
         itemRepository = mock(ItemRepository.class);
-        List<Item> items1 = new ArrayList<>();
-        List<Item> items2 = new ArrayList<>();
-        List<Item> items3 = new ArrayList<>();
-        items1.add(new Item(1,"Pool",0.07,1,"Pool"));
-        items2.add(new Item(2,"Garden",0.05,2,"Garden"));
-        items3.add(new Item(3,"Bad",-0.05,3,"Condition"));
-        items3.add(new Item(4,"Fair",0.00,3,"Condition"));
-        items3.add(new Item(5,"Good",0.05,3,"Condition"));
 
-        when(itemRepository.findAllByGroupId(1)).thenReturn(items1);
-        when(itemRepository.findAllByGroupId(2)).thenReturn(items2);
-        when(itemRepository.findAllByGroupId(3)).thenReturn(items3);
-
+        when(itemRepository.getReferenceById(1)).thenReturn(ITEM_1);
+        when(itemRepository.getReferenceById(2)).thenReturn(ITEM_2);
+        when(itemRepository.getReferenceById(3)).thenReturn(ITEM_3);
         service = new EvaluationService(propertyRepository,itemRepository);
-
-
 
         RealEstateItem item1 = RealEstateItem.builder()
                 .id(1)
-                .item(new Item(1,"Pool",0.07,1,"Pool"))
+                .item(ITEM_1)
                 .build();
 
         RealEstateItem item2 = RealEstateItem.builder()
                 .id(2)
-                .item(new Item(2,"Garden",0.05,2,"Garden"))
+                .item(ITEM_2)
                 .build();
 
         RealEstateItem item3 = RealEstateItem.builder()
                 .id(2)
-                .item(new Item(3,"Bad",-0.05,3,"Condition"))
+                .item(ITEM_3)
                 .build();
 
         ArrayList<RealEstateItem> list1 = new ArrayList<>();
@@ -198,21 +190,21 @@ public class EvaluationServiceTest {
 
         long result = service.appraiseItem(RealEstateItem.builder()
                 .id(1)
-                .item(new Item(1,"Pool",0.07,1,"Pool"))
+                .item(ITEM_1)
                 .build(),14000);
         long expected = 980L;
         assertEquals(expected,result);
 
         result = service.appraiseItem(RealEstateItem.builder()
                 .id(2)
-                .item(new Item(2,"Garden",0.05,2,"Garden"))
+                .item(ITEM_2)
                 .build(),14000);
         expected = 700L;
         assertEquals(expected,result);
 
         result = service.appraiseItem(RealEstateItem.builder()
                 .id(3)
-                .item(new Item(3,"Bad",-0.05,3,"Condition"))
+                .item(ITEM_3)
                 .build(),14000);
         expected = -700L;
         assertEquals(expected,result);

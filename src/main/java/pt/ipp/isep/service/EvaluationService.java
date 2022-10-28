@@ -115,25 +115,14 @@ public class EvaluationService {
     }
 
     public long appraiseItem(RealEstateItem realEstateItem, long basePrice){
-        List<Item> items = itemRepository.findAllByGroupId(realEstateItem.getItem().getGroupId());
-        double calculatedValue = basePrice;
-        if(items.size()==1){
-            final double percentage = items.get(0).getAppreciationPercentage();
-            final double multiplier= 1+(percentage);
-            calculatedValue = calculatedValue*multiplier;
-        }
-        else if(items.size()>1){
-            for(Item item: items){
-                if(item.getId() == realEstateItem.getItem().getId()){
-                    final double percentage = item.getAppreciationPercentage();
-                    final double multiplier= 1+(percentage);
-                    calculatedValue = calculatedValue*multiplier;
-                }
-            }
-        }
-        long baseValueModifier = Math.round(calculatedValue)-basePrice;
-        return baseValueModifier;
+        Item item = itemRepository.getReferenceById(realEstateItem.getItem().getId());
 
+        if (item != null) {
+            double calculatedValue = basePrice*(1+item.getAppreciationPercentage());
+            return Math.round(calculatedValue)-basePrice;
+        } else {
+            throw new ApiException("Item id is invalid: "+realEstateItem.getItem().getId(), HttpStatus.BAD_REQUEST);
+        }
     }
 
 }
