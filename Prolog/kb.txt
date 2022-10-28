@@ -1,8 +1,6 @@
  
 energyCert("A2",0.01).
 
-postalCodeList(4400,[130,121,133,139,140]).
-
 condition("Normal",0).
 condition("New",0.05).
 condition("Renovated",0.02).
@@ -19,7 +17,7 @@ deal(1,16000,15000,0,1.06,"Average").
 deal(2,15500,10000,0,1.55,"Very Good").
 deal(3,8000,12000,0,0.66,"Bad").
 deal(4,16500,16000,0,1.06,"Average").
-deal(5,13500,12000,0,1,12."Average").
+deal(5,13500,12000,0,1.12,"Average").
 businessQuality([0,0.25],"Very Awful").
 businessQuality([0.25,0.5],"Awful").
 businessQuality([0.5,0.8],"Bad").
