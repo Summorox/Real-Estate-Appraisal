@@ -1,28 +1,12 @@
-:- dynamic sampleSize/1.
-:- dynamic depByYear/1.
-:- dynamic aprecByParkSlot/1.
-:- dynamic currYear/1.
 :- dynamic appreciation/3.
-:- dynamic tempList/1.
 :- dynamic flag/1.
 :- dynamic deal/6.
 :- dynamic estate/14.
 :- dynamic postalCodeList/2.
+:- consult('KB').
 
-:- assertz(currYear(2022)).
-
-:- assertz(sampleSize(3)).
-
-:- assertz(depByYear(-0.005)).
-
-:- assertz(aprecByParkSlot(0.025)).
-
-:- assertz(aprecByBathRoom(0.01)).
 
 flag("decrementa").
-
-extra(id,desc,perc).
-
 postalCodeList(4400,[130,121,133,140]).
 
 
@@ -33,11 +17,13 @@ carrega_bc:-
         read(NBC),
         consult(NBC).
 
+nothing(_).
+
 /*predicado que imprime os factos para cada imovel avaliado*/
 getData(Estate,List,String,It1,Final):-
     appreciation(Estate,Element,Value),
     not(member(Element,List)),
-    (It1 == 0 -> String = '';Temp=1), 
+    (It1 == 0 -> String = '';nothing(0)), 
     (Value == 0.0 -> 
     box(Element,Box),
     append([Box,List],NewList),
@@ -80,7 +66,8 @@ why_not(Estate,Quality,String):-
     atom_concat(Temp5,'% below the client required value',Ninth)),
     atom_concat(Eigth,Ninth,Tenth),
     atom_concat(Seventh,Tenth,String).
-    
+why_not(_,_,String):-
+    String = 'That estate doesnt exist or was not evaluated.'.    
 
 /*predicado de explicações do porque*/
 how(Estate,FinalString):-
@@ -93,7 +80,7 @@ how(Estate,FinalString):-
     atom_concat(Second,EstimatedValue,Third),
     atom_concat(Third,', because based on the started value ',Fourth),
     atom_concat(Fourth,BaseValue,Fifth),
-    atom_concat(Fifth,' we applied the following rules: ',Sixth),nl,getData(Estate,[],String,0,Final),
+    atom_concat(Fifth,' we applied the following rules: ',Sixth),nl,getData(Estate,[],_,0,Final),
     atom_concat(Sixth,Final,Seventh),
     atom_concat(Seventh,' .Making the calculations, we estimated ',Eigth),
     atom_concat(Eigth,EstimatedValue,Ninth),
@@ -101,6 +88,9 @@ how(Estate,FinalString):-
     atom_concat(Tenth,ClientValue,Eleven),
     atom_concat(Eleven,') and the estimated value calculated before, we rate this deal as ',Twelve),
     atom_concat(Twelve,Quality,FinalString).
+how(Estate,FinalString):-
+    FinalString = 'That estate doesnt exist or was not evaluated.'.    
+
 
 /*metodo que vai buscar o multiplicador para cada avaliação*/
 getMultiplier(Mode,Perc,Multiplier):-
@@ -130,7 +120,7 @@ evaluateComponent(Estate,Value,Desc,FinalValue,Element,Mode):-
 /*metodo que vai avaliar um imovel pelo seu ano de construção*/
 evaluateConstYear(Estate,Value,ConstYear,FinalValue,Mode):-
     currYear(CurrYear),
-    depByYear(DepYear),
+    rules("years depreciation",DepYear),
     getMultiplier(Mode,DepYear,Multiplier),
     DiffYears is CurrYear-ConstYear,
     potencia(Multiplier,DiffYears,Res),
@@ -139,9 +129,7 @@ evaluateConstYear(Estate,Value,ConstYear,FinalValue,Mode):-
 
 /*metodo que vai avaliar um imovel pelo seu numero de quartos de banho e lugares de estacionamento*/
 evaluateSpots(Estate,Value,Number,FinalValue,Element,Mode):-
-    (Element == "number of parking slots" ->
-        aprecByParkSlot(Perc);
-        aprecByBathRoom(Perc)),
+    rules(Element,Perc),
     getMultiplier(Mode,Perc,Multiplier),
     potencia(Multiplier,Number,Res),
     FinalValue is Res*Value,
@@ -235,9 +223,6 @@ addPostal(_,_).
 arranca_motor:-
     arranca_motor2([]).    
     
-testePred(Estate,FinalValue,Quality):-
-    evaluateSingular(Estate,FinalValue,Quality).
-
 evaluateSingular(Estate,FinalValue,Quality):-
     deal(Estate,FinalValue,_,_,_,Quality).
 

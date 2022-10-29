@@ -9,7 +9,6 @@
 :- use_module(library(http/json_convert)).
 :- set_setting(http:cors,[*]).
 :- use_module(library(term_to_json)).
-
 :-consult('predicadosRun').
 
 
@@ -27,25 +26,19 @@ start_system(Request):-
     format(user_output,'Request received:~p~n with body:~p~n~n',[Request,Input]),
     (Input.Mode == "evaluate" ->(
         load_estate(Input),
-        evaluateSingular(Input.id,FinalValue,Quality),
+        evaluateSingular(Input.id,_,_),
         generate_output_evaluate(Output,Input.id) -> !,
         reply_json_dict(Output);
         atom_json_dict('{"message":"Error generating output"}', Error,_),
         reply_json_dict(Error,[status([400])]));
-        (Input.Mode == "how" ->(
-            how(Input.id,String),
+        ((Input.Mode == "how" ->
+            how(Input.id,String);
+            why_not(Input.id,Input.question,String)),
             Output = json{reason:String},
             reply_json_dict(Output);
             atom_json_dict('{"message":"Error generating output"}', Error,_),
-            reply_json_dict(Error,[status([400])]))
-            ;
-            (
-            why_not(Input.id,Input.question,String),
-            Output = json{reason:String},
-            reply_json_dict(Output);
-            atom_json_dict('{"message":"Error generating output"}', Error,_),
-            reply_json_dict(Error,[status([400])]))
-        )
+            reply_json_dict(Error,[status([400])])
+        )    
     ).
 
 
@@ -63,7 +56,7 @@ generate_output_evaluate(Output,EstateId):-
 
 generate_output_deal_evaluate(EstateId,OutputDeal):-
     findall(json{id:EstateId,clientPrice:ClientPriceString,evaluationPrice:EvaluationPriceString,perc:PercString,
-                 quality:QualityString},
+    quality:QualityString},
     (deal(EstateId,EvaluationPrice,ClientPrice,_,Perc,Quality),
     atom_string(ClientPrice,ClientPriceString),
     atom_string(EvaluationPrice,EvaluationPriceString),
