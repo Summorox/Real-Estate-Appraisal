@@ -25,35 +25,43 @@ start_system(Request):-
     member(method(post), Request), !,
     http_read_json_dict(Request, Input),
     format(user_output,'Request received:~p~n with body:~p~n~n',[Request,Input]),
-    (load_estate(Input,EstateId),
-    evaluateSingular(EstateId,FinalValue,Quality),
-    generate_output(Output,EstateId) -> !,
-    reply_json_dict(Output);
-    atom_json_dict('{"message":"Error generating output"}', Error,_),
-    reply_json_dict(Error,[status([400])])).
+    (Input.Mode == "evaluate" ->(
+        load_estate(Input),
+        evaluateSingular(Input.id,FinalValue,Quality),
+        generate_output_evaluate(Output,Input.id) -> !,
+        reply_json_dict(Output);
+        atom_json_dict('{"message":"Error generating output"}', Error,_),
+        reply_json_dict(Error,[status([400])]));
+        (Input.Mode == "how" ->(
+            how(Input.id,String),
+            Output = json{reason:String},
+            reply_json_dict(Output);
+            atom_json_dict('{"message":"Error generating output"}', Error,_),
+            reply_json_dict(Error,[status([400])]))
+            ;
+            (
+            why_not(Input.id,Input.question,String),
+            Output = json{reason:String},
+            reply_json_dict(Output);
+            atom_json_dict('{"message":"Error generating output"}', Error,_),
+            reply_json_dict(Error,[status([400])]))
+        )
+    ).
 
 
-load_estate(Estate,Estate.id):-
-
+load_estate(Estate):-
     retractall(estate(Estate.id,_,_,_,_,_,_,_,_,_,_,_,_,_)),
     assert(estate(Estate.id,Estate.type,Estate.condition,Estate.m2,Estate.typology,Estate.year,Estate.certificate,Estate.parkSlots,Estate.bathrooms,Estate.address,Estate.zipcode,Estate.clientPrice,Estate.items,"Not_Evaluated")).
     /*Linhas abaixo foi para testar se retornava os dados direitos em json*/
     /*retractall(deal(Estate.id,_,_,_,_,_)).*/
     /*assert(deal(Estate.id,16000,15000,0,1.06,"Average")).*/
 
-generate_output(Output,Estate):-
-	generate_output_deal(Estate,OutputDeal),
+generate_output_evaluate(Output,EstateId):-
+	generate_output_deal_evaluate(EstateId,OutputDeal),
         Output = json{deal:OutputDeal}.
 
-/*generate_output_deal(Estate,OutputDeal):-
-    format(user_output,'ISTO ESTA A DAR ~p~n ',[Estate]),
-    findall(json{id:Estate,evaluationPrice:EvaluationPriceString,quality:Quality},
-    (deal(Estate,EvaluationPrice,_,_,_,Quality),
-    atom_string(EvaluationPrice,EvaluationPriceString),
-    atom_string(Perc,PercString)),
-    OutputDeal).*/
 
-generate_output_deal(EstateId,OutputDeal):-
+generate_output_deal_evaluate(EstateId,OutputDeal):-
     findall(json{id:EstateId,clientPrice:ClientPriceString,evaluationPrice:EvaluationPriceString,perc:PercString,
                  quality:QualityString},
     (deal(EstateId,EvaluationPrice,ClientPrice,_,Perc,Quality),

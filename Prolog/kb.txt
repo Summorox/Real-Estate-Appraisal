@@ -26,4 +26,3 @@ businessQuality([1.2,1.5],"Good").
 businessQuality([1.5,1.8],"Very Good").
 businessQuality([1.5,1.8],"Excelent").
 businessQuality([1.8,99],"Exceptional").
-evaluation(1,1).

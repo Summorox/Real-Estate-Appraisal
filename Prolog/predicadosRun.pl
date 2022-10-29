@@ -34,58 +34,73 @@ carrega_bc:-
         consult(NBC).
 
 /*predicado que imprime os factos para cada imovel avaliado*/
-getData(Estate,List):-
+getData(Estate,List,String,It1,Final):-
     appreciation(Estate,Element,Value),
-    not(member(Element,List)), 
+    not(member(Element,List)),
+    (It1 == 0 -> String = '';Temp=1), 
     (Value == 0.0 -> 
     box(Element,Box),
     append([Box,List],NewList),
-    getData(Estate,NewList);
-    write('- because of the  '),write(Element),
+    getData(Estate,NewList,'',1,Final);
+    atom_concat(' ','because of the  ',First),
+    atom_concat(First,Element,Second),
     (Value>0 -> 
-    write(' ,the estate value increased by ');
-    write(' ,the estate value decreased by ')),
-    write(Value),nl,
+    atom_concat(Second,' ,the estate value increased by ',Third);
+    atom_concat(Second,' ,the estate value decreased by ',Third)),
+    atom_concat(Third,Value,Fourth),
+    atom_concat(Fourth,'; ',EString),
+    atom_concat(String,EString,String2),
     box(Element,Box),
     append([Box,List],NewList),
-    getData(Estate,NewList)).
-getData(_,_).
+    getData(Estate,NewList,String2,1,Final)).
+getData(_,_,Final,_,Final).
 
-why_not(Estate,Quality):-
+why_not(Estate,Quality,String):-
     deal(Estate,_,_,_,_,Quality),
-    write('The real estate business is already rated as '),write(Quality).
-why_not(Estate,Quality):-
+    atom_concat('The real estate business is already rated as ',Quality,String).
+why_not(Estate,Quality,String):-
     deal(Estate,_,_,_,Perc,Quality2),
     businessQuality([Lower,Upper],Quality),
-    write('The real estate business was rated as '),write(Quality2),
-    write(' ,because the real estate estimate value is '),
-    Temp is (Perc-1),Temp2 is abs(Temp)*100,write(Temp2),
-    (Temp>0 -> write('% above the client required value');
-    write('% below the client required value')),nl,
-    write('For it to be rate as a '),write(Quality),
-    write(' business, the estimated value should be between '),
+    atom_concat('The real estate business was rated as ',Quality2,First),
+    Temp is (Perc-1),Temp2 is abs(Temp)*100,
+    atom_concat(' ,because the real estate estimate value is ',Temp2,Second),
+    atom_concat(First,Second,Third),
+    (Temp>0 -> atom_concat(Third,'% above the client required value',Fourth);
+    atom_concat(Third,'% below the client required value',Fourth)),nl,
+    atom_concat(Fourth,'For it to be rate as a ',Fifth)
+    ,atom_concat(Quality,' business, the estimated value should be between ',Sixth),
     Temp3 is (Lower-1),
+    atom_concat(Fifth,Sixth,Seventh),
     (Temp3>0 -> 
-    Temp4 is abs(Temp3)*100,write(Temp4),write('% and '),
-    Temp5 is (Upper-1),Temp6 is abs(Temp5)*100,write(Temp6),
-    write('% above the client required value');
+    Temp4 is abs(Temp3)*100,atom_concat(Temp4,'% and ',Eigth),
+    Temp5 is (Upper-1),Temp6 is abs(Temp5)*100,
+    atom_concat(Temp6,'% above the client required value',Ninth);
     Temp4 is Lower*100,Temp5 is Upper*100,
-    write(Temp4),write('% and '),write(Temp5),
-    write('% below the client required value')).
-
+    atom_concat(Temp4,'% and ',Eigth),
+    atom_concat(Temp5,'% below the client required value',Ninth)),
+    atom_concat(Eigth,Ninth,Tenth),
+    atom_concat(Seventh,Tenth,String).
+    
 
 /*predicado de explicações do porque*/
-how(Estate):-
+how(Estate,FinalString):-
     deal(Estate,_,_,0,_,_),
-    write('The real estate nº'),write(Estate),write(' was already known!').
-how(Estate):-
+    atom_concat("The real estate nº ",Estate,First),atom_concat(First,' was already known!',FinalString).
+how(Estate,FinalString):-
     deal(Estate,EstimatedValue,ClientValue,BaseValue,_,Quality),
-    write('The real estate numero '),write(Estate),write(' was estimated in '),
-    write(EstimatedValue),write(', because based on the started value '),
-    write(BaseValue),write(' we applied the following rules:'),nl,getData(Estate,[]),
-    write('Making the calculations, we estimated '),write(EstimatedValue),nl,
-    write('According to the value required by the client ('),write(ClientValue),
-    write(') and the estimated value calculated before, we rate this deal as '),write(Quality).
+    atom_concat('The real estate number ',Estate,First),
+    atom_concat(First,' was estimated in ',Second),
+    atom_concat(Second,EstimatedValue,Third),
+    atom_concat(Third,', because based on the started value ',Fourth),
+    atom_concat(Fourth,BaseValue,Fifth),
+    atom_concat(Fifth,' we applied the following rules: ',Sixth),nl,getData(Estate,[],String,0,Final),
+    atom_concat(Sixth,Final,Seventh),
+    atom_concat(Seventh,' .Making the calculations, we estimated ',Eigth),
+    atom_concat(Eigth,EstimatedValue,Ninth),
+    atom_concat(Ninth,'. According to the value required by the client (',Tenth),
+    atom_concat(Tenth,ClientValue,Eleven),
+    atom_concat(Eleven,') and the estimated value calculated before, we rate this deal as ',Twelve),
+    atom_concat(Twelve,Quality,FinalString).
 
 /*metodo que vai buscar o multiplicador para cada avaliação*/
 getMultiplier(Mode,Perc,Multiplier):-
@@ -176,7 +191,7 @@ getDepreciatedValues([T|L],[H|R]):-
 
 /*metodo de depreciação de um imovel*/
 depreciate(Estate,Value):-
-    deal(Estate,EvaluationValue,Y,X,_,_),
+    deal(Estate,EvaluationValue,_,_,_,_),
     evaluate(Estate,EvaluationValue,Value,"Depreciate").
 
 /*soma todos os elementos de uma lista*/
@@ -231,7 +246,6 @@ evaluateSingular(Estate,FinalValue,Quality):-
     addPostal(Prefixo,Sufixo),
     get_sample(Estate,Sample),
     get_average(Sample,Average),
-    format(user_output,'ISTO ESTA A DAR ~p~n ',8),
     evaluate(Estate,Average,FinalValue,"Appreciate"),
     qualify_deal(ClientValue,FinalValue,Perc,Quality),
     assertz(deal(Estate,Average,ClientValue,FinalValue,Perc,Quality)),
