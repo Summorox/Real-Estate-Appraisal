@@ -1,13 +1,36 @@
- 
+currYear(2022).
+sampleSize(3).
 energyCert("A2",0.01).
-
+energyCert("A3",0.015).
+energyCert("A1",0.005).
+energyCert("B1",0.003).
+energyCert("B2",0.002).
+energyCert("C1",-0,003).
+energyCert("C2",-0,006).
+energyCert("C3",-0,009).
 condition("Normal",0).
 condition("New",0.05).
 condition("Renovated",0.02).
 condition("Old",-0.05).
+rules("number of bathrooms",0.01).
+rules("number of parking slots",0.025).
+rules("years depreciation",-0.005).
 rules("garden",0.05).
 rules("pool",0.07).
 rules("terrace",0.04).
+rules("luxury finishes",0.01).
+rules("alarm",0.04).
+rules("central heating",0.02).
+rules("air conditioning",0.025).
+rules("good sun exposure",0.03).
+rules("gated community",0.03).
+rules("equipped kitchen",0.02).
+rules("pantry",0.01).
+rules("garage",0.023).
+rules("elevator",0.02).
+rules("penthouse",0.014).
+rules("near the beach",0.07).
+rules("near the subway",0.03).
 estate(1,"Apartment","New",117,"T3",1970,"A2",0,2,"Rua X",[4400,130],15000,["pool","terrace"],"Evaluated").
 estate(2,"Apartment","New",123,"T3",1978,"A2",1,2,"Rua T",[4400,121],10000,["garden"],"Evaluated").
 estate(3,"Apartment","New",103,"T3",1974,"A2",3,2,"Rua Y",[4400,139],12000,[],"Evaluated").
