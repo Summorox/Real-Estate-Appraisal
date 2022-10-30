@@ -61,10 +61,10 @@ why_not(Estate,Quality,String):-
     (Temp3>0 ->
     Temp4 is abs(Temp3)*100,atom_concat(Temp4,'% and ',Eigth),
     Temp5 is (Upper-1),Temp6 is abs(Temp5)*100,
-    atom_concat(Temp6,'% above the client required value. ',Ninth);
+    atom_concat(Temp6,'% above the client required value',Ninth);
     Temp4 is Lower*100,Temp5 is Upper*100,
     atom_concat(Temp4,'% and ',Eigth),
-    atom_concat(Temp5,'% below the client required value. ',Ninth)),
+    atom_concat(Temp5,'% below the client required value',Ninth)),
     atom_concat(Eigth,Ninth,Tenth),
     atom_concat(Seventh,Tenth,String).
 why_not(_,_,String):-

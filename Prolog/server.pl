@@ -45,9 +45,6 @@ start_system(Request):-
 load_estate(Estate):-
     retractall(estate(Estate.id,_,_,_,_,_,_,_,_,_,_,_,_,_)),
     assert(estate(Estate.id,Estate.type,Estate.condition,Estate.m2,Estate.typology,Estate.year,Estate.certificate,Estate.parkSlots,Estate.bathrooms,Estate.address,Estate.zipcode,Estate.clientPrice,Estate.items,"Not_Evaluated")).
-    /*Linhas abaixo foi para testar se retornava os dados direitos em json*/
-    /*retractall(deal(Estate.id,_,_,_,_,_)).*/
-    /*assert(deal(Estate.id,16000,15000,0,1.06,"Average")).*/
 
 generate_output_evaluate(Output,EstateId):-
 	generate_output_deal_evaluate(EstateId,OutputDeal),
