@@ -7,7 +7,7 @@ import pt.ipp.isep.model.RealEstate;
 import pt.ipp.isep.service.EvaluationService;
 
 @RestController
-@RequestMapping("evaluation-drools")
+@RequestMapping("evaluation")
 public class EvaluationController {
 
     private EvaluationService service;
