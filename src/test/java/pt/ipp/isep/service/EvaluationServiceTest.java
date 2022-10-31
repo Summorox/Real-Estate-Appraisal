@@ -9,7 +9,7 @@ import pt.ipp.isep.repository.PropertyRepository;
 import pt.ipp.isep.sample.Property;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -32,9 +32,9 @@ public class EvaluationServiceTest {
         propertyRepository = mock(PropertyRepository.class);
         itemRepository = mock(ItemRepository.class);
 
-        when(itemRepository.getReferenceById(1)).thenReturn(ITEM_1);
-        when(itemRepository.getReferenceById(2)).thenReturn(ITEM_2);
-        when(itemRepository.getReferenceById(3)).thenReturn(ITEM_3);
+        when(itemRepository.findById(1)).thenReturn(Optional.of(ITEM_1));
+        when(itemRepository.findById(2)).thenReturn(Optional.of(ITEM_2));
+        when(itemRepository.findById(3)).thenReturn(Optional.of(ITEM_3));
         service = new EvaluationService(propertyRepository,itemRepository);
 
         RealEstateItem item1 = RealEstateItem.builder()
