@@ -43,10 +43,11 @@ public class EvaluationService {
         kieSession.insert(realEstate);
 
         //insert evaluation
-        kieSession.insert(Evaluation.builder().
-                realEstate(realEstate).
-                appraiseValue(evaluationBasePrice)
-                .baseValue(evaluationBasePrice));
+        kieSession.insert(Evaluation.builder()
+                .realEstate(realEstate)
+                .appraiseValue(evaluationBasePrice)
+                .baseValue(evaluationBasePrice)
+                .build());
 
         kieSession.setGlobal("evaluationService", this);
         kieSession.fireAllRules();
@@ -115,14 +116,11 @@ public class EvaluationService {
     }
 
     public long appraiseItem(RealEstateItem realEstateItem, long basePrice){
-        Item item = itemRepository.getReferenceById(realEstateItem.getItem().getId());
+        Item item = itemRepository.findById(realEstateItem.getItem().getId())
+                .orElseThrow(()-> new ApiException("Item id is invalid: "+realEstateItem.getItem().getId(), HttpStatus.BAD_REQUEST));
 
-        if (item != null) {
-            double calculatedValue = basePrice*(1+item.getAppreciationPercentage());
-            return Math.round(calculatedValue)-basePrice;
-        } else {
-            throw new ApiException("Item id is invalid: "+realEstateItem.getItem().getId(), HttpStatus.BAD_REQUEST);
-        }
+        double calculatedValue = basePrice*(1+item.getAppreciationPercentage());
+        return Math.round(calculatedValue)-basePrice;
     }
 
 }
