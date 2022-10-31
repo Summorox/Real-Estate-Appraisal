@@ -1,11 +1,12 @@
 package pt.ipp.isep.controller;
 
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import pt.ipp.isep.explanation.How;
 import pt.ipp.isep.model.Evaluation;
 import pt.ipp.isep.model.RealEstate;
 import pt.ipp.isep.service.EvaluationService;
-
+@AllArgsConstructor
 @RestController
 @RequestMapping("evaluation")
 public class EvaluationController {
