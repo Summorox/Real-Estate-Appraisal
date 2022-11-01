@@ -48,5 +48,4 @@ businessQuality([0.8,1.0],"Average").
 businessQuality([1.0,1.2],"Lightly Good").
 businessQuality([1.2,1.5],"Good").
 businessQuality([1.5,1.8],"Very Good").
-businessQuality([1.5,1.8],"Excelent").
-businessQuality([1.8,99],"Exceptional").
+businessQuality([1.8,3],"Exceptional").

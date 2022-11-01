@@ -5,7 +5,7 @@
 :- dynamic postalCodeList/2.
 :- consult('KB').
 
-
+teste(S):- format("testando ~w a ver. ~n nao da", S).
 flag("decrementa").
 postalCodeList(4400,[130,121,133,140]).
 
@@ -52,13 +52,13 @@ why_not(Estate,Quality,String):-
     swritef(Second,'% below the client required value.For it to be rate as a %w business, the estimated value should be between ',[Quality])),
     Temp3 is (Lower-1),
     atom_concat(First,Second,Third),
-    (Temp3>0 -> 
+    (Temp3>=0 -> 
     Temp4 is abs(Temp3)*100,Temp5 is round(Temp4),
     Temp6 is (Upper-1),Temp7 is abs(Temp6)*100, Temp8 is round(Temp7),
     swritef(Fourth,'%w% and %w% above the client required value',[Temp5,Temp8]);
-    Temp4 is Lower*100,Temp5 is Upper*100,
+    Temp4 is ((1-Lower)*100),Temp5 is ((1-Upper)*100),
     Temp6 is round(Temp4),Temp7 is round(Temp5),
-    swritef(Fourth,'%w% and %w% below the client required value',[Temp6,Temp7])),
+    swritef(Fourth,'%w% and %w% below the client required value',[Temp7,Temp6])),
     atom_concat(Third,Fourth,String).
 why_not(_,_,String):-
     String = 'That estate doesnt exist or was not evaluated.'.    
