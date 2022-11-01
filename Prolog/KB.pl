@@ -44,7 +44,8 @@ deal(5,13500,12000,0,1.12,"Average").
 businessQuality([0,0.25],"Very Awful").
 businessQuality([0.25,0.5],"Awful").
 businessQuality([0.5,0.8],"Bad").
-businessQuality([0.8,1.2],"Average").
+businessQuality([0.8,1.0],"Average").
+businessQuality([1.0,1.2],"Lightly Good").
 businessQuality([1.2,1.5],"Good").
 businessQuality([1.5,1.8],"Very Good").
 businessQuality([1.5,1.8],"Excelent").

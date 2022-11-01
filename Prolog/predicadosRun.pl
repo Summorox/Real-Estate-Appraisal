@@ -23,19 +23,16 @@ nothing(_).
 getData(Estate,List,String,It1,Final):-
     appreciation(Estate,Element,Value),
     not(member(Element,List)),
-    (It1 == 0 -> String = '';nothing(0)),
-    (Value == 0.0 ->
+    (It1 == 0 -> String = '';nothing(0)), 
+    (Value == 0.0 -> 
     box(Element,Box),
     append([Box,List],NewList),
-    getData(Estate,NewList,'',1,Final);
-    atom_concat(' ','because of the  ',First),
-    atom_concat(First,Element,Second),
-    (Value>0 ->
-    atom_concat(Second,' ,the estate value increased by ',Third);
-    atom_concat(Second,' ,the estate value decreased by ',Third)),
-    atom_concat(Third,Value,Fourth),
-    atom_concat(Fourth,'; ',EString),
-    atom_concat(String,EString,String2),
+    getData(Estate,NewList,String,1,Final);
+    Temp1 is round(Value),
+    (Value>0 -> 
+    swritef(First,' because of the %w the estate value increased by %w; ',[Element,Temp1]);
+    swritef(First,' because of the %w the estate value decreased by %w; ',[Element,Temp1])),
+    atom_concat(String,First,String2),
     box(Element,Box),
     append([Box,List],NewList),
     getData(Estate,NewList,String2,1,Final)).
@@ -43,59 +40,46 @@ getData(_,_,Final,_,Final).
 
 why_not(Estate,Quality,String):-
     deal(Estate,_,_,_,_,Quality),
-    atom_concat('The real estate business is already rated as ',Quality,TempN),
-    atom_concat(TempN,'~n',String).
+    swritef(String,'The real estate business is already rated as %w!',[Quality]).
 why_not(Estate,Quality,String):-
     deal(Estate,_,_,_,Perc,Quality2),
     businessQuality([Lower,Upper],Quality),
-    atom_concat('The real estate business was rated as ',Quality2,First),
-    Temp is (Perc-1),Temp2 is abs(Temp)*100,
-    atom_concat(' ,because the real estate estimate value is ',Temp2,Second),
-    atom_concat(First,Second,Third),
-    (Temp>0 -> atom_concat(Third,'% above the client required value. ',Fourth);
-    atom_concat(Third,'% below the client required value. ',Fourth)),nl,
-    atom_concat(Fourth,'For it to be rate as a ',Fifth)
-    ,atom_concat(Quality,' business, the estimated value should be between ',Sixth),
+    Temp is (Perc-1),Temp1 is abs(Temp)*100,
+    Temp2 is round(Temp1),
+    swritef(First,'The real estate business was rated as %w ,because the real estate estimate value is %w',[Quality2,Temp2]),
+    (Temp>0 -> 
+    swritef(Second,'% above the client required value.For it to be rate as a %w business, the estimated value should be between ',[Quality]);
+    swritef(Second,'% below the client required value.For it to be rate as a %w business, the estimated value should be between ',[Quality])),
     Temp3 is (Lower-1),
-    atom_concat(Fifth,Sixth,Seventh),
-    (Temp3>0 ->
-    Temp4 is abs(Temp3)*100,atom_concat(Temp4,'% and ',Eigth),
-    Temp5 is (Upper-1),Temp6 is abs(Temp5)*100,
-    atom_concat(Temp6,'% above the client required value. ',Ninth);
+    atom_concat(First,Second,Third),
+    (Temp3>0 -> 
+    Temp4 is abs(Temp3)*100,Temp5 is round(Temp4),
+    Temp6 is (Upper-1),Temp7 is abs(Temp6)*100, Temp8 is round(Temp7),
+    swritef(Fourth,'%w% and %w% above the client required value',[Temp5,Temp8]);
     Temp4 is Lower*100,Temp5 is Upper*100,
-    atom_concat(Temp4,'% and ',Eigth),
-    atom_concat(Temp5,'% below the client required value. ',Ninth)),
-    atom_concat(Eigth,Ninth,Tenth),
-    atom_concat(Seventh,Tenth,String).
+    Temp6 is round(Temp4),Temp7 is round(Temp5),
+    swritef(Fourth,'%w% and %w% below the client required value',[Temp6,Temp7])),
+    atom_concat(Third,Fourth,String).
 why_not(_,_,String):-
-    String = 'That estate doesnt exist or was not evaluated.'.
+    String = 'That estate doesnt exist or was not evaluated.'.    
 
 /*predicado de explicações do porque*/
 how(Estate,FinalString):-
     deal(Estate,_,_,0,_,_),
-    atom_concat("The real estate n� ",Estate,First),atom_concat(First,' was already known!',FinalString).
+    swritef(FinalString,'The real estate n%w was already known!',[Estate]).
 how(Estate,FinalString):-
     deal(Estate,EstimatedValue,ClientValue,BaseValue,_,Quality),
-    atom_concat('The real estate number ',Estate,First),
-    atom_concat(First,' was estimated in ',Second),
-    atom_concat(Second,EstimatedValue,Third),
-    atom_concat(Third,', because based on the started value ',Fourth),
-    atom_concat(Fourth,BaseValue,Fifth),
-    atom_concat(Fifth,' we applied the following rules: ',Sixth),nl,getData(Estate,[],_,0,Final),
-    atom_concat(Sixth,Final,Seventh),
-    atom_concat(Seventh,' .Making the calculations, we estimated ',Eigth),
-    atom_concat(Eigth,EstimatedValue,Ninth),
-    atom_concat(Ninth,'. According to the value required by the client (',Tenth),
-    atom_concat(Tenth,ClientValue,Eleven),
-    atom_concat(Eleven,') and the estimated value calculated before, we rate this deal as ',Twelve),
-    atom_concat(Twelve,Quality,FinalString).
+    Temp1 is round(EstimatedValue),
+    Temp2 is round(BaseValue),
+    getData(Estate,[],_,0,Final),
+    swritef(FinalString,'The real estate number %w was estimated in %w , because based on the started value %w we applied the following rules: %w. According to the value required by the client (%w) and the estimated value calculated before, we rate this deal as %w!',[Estate,Temp1,Temp2,Final,ClientValue,Quality]).
 how(Estate,FinalString):-
-    FinalString = 'That estate doesnt exist or was not evaluated.'.
+    FinalString = 'That estate doesnt exist or was not evaluated.'.    
 
 
 /*metodo que vai buscar o multiplicador para cada avaliação*/
 getMultiplier(Mode,Perc,Multiplier):-
-    (Mode == "Appreciate" ->
+    (Mode == "Appreciate" ->    
             Multiplier is 1+Perc;
             Multiplier is 1-Perc).
 
@@ -110,14 +94,14 @@ generate_facts2(Estate,Element,Difference):-
     assertz(appreciation(Estate,Element,Difference)).
 
 /*metodo que vai avaliar um imovel pela sua condição e certificado energetico*/
-evaluateComponent(Estate,Value,Desc,FinalValue,Element,Mode):-
+evaluateComponent(Estate,Value,Desc,FinalValue,Element,Mode):-    
     (Element == "house condition" ->
         condition(Desc,Perc);
-        energyCert(Desc,Perc)),
-    getMultiplier(Mode,Perc,Multiplier),
+        energyCert(Desc,Perc)),        
+    getMultiplier(Mode,Perc,Multiplier),            
     FinalValue is Multiplier*Value,
     generate_facts(Estate,Element,Value,FinalValue,Mode).
-
+    
 /*metodo que vai avaliar um imovel pelo seu ano de construção*/
 evaluateConstYear(Estate,Value,ConstYear,FinalValue,Mode):-
     currYear(CurrYear),
@@ -159,7 +143,7 @@ evaluate(Estate,BaseValue,FinalValue,Mode):-
     evaluateConstYear(Estate,BaseValue,ConstYear,Value1,Mode),
     evaluateSpots(Estate,Value1,ParkSlots,Value2,"number of parking slots",Mode),
     evaluateSpots(Estate,Value2,BathRooms,Value3,"number of bathrooms",Mode),
-    evaluateComponent(Estate,Value3,Condition,Value4,"house condition",Mode),
+    evaluateComponent(Estate,Value3,Condition,Value4,"house condition",Mode),    
     evaluateComponent(Estate,Value4,EnergyCert,Value5,"energy certfication",Mode),
     evaluateExtras(Estate,Value5,ListaExtras,FinalValue,Mode).
 
@@ -169,7 +153,7 @@ get_average(List,Average):-
     getDepreciatedValues(NewList,ValueList),
     sum( ValueList, Sum ),
     length( ValueList, Length ),
-    Length > 0,
+    Length > 0, 
     Average is Sum / Length.
 
 /*vai receber uma lista com os ids de imoveis e retornar o uma lista com os seus valores depreciados*/
@@ -190,14 +174,14 @@ sum([H|L],Sum):-
     Sum is Sum2 + H.
 
 /*mete um objecto dentro de uma lista*/
-box(Box,[Box]).
+box(Box,[Box]). 
 
 /*qualifica o negocio*/
 qualify_deal(ClientValue,FinalValue,Perc,Quality):-
     businessQuality([Min,Max],Quality),
     Perc is FinalValue/ClientValue,
     Perc > Min,
-    Perc < Max.
+    Perc < Max.   
 
 /*altera o estado de um imovel para evaluated*/
 changeState(Estate):-
@@ -222,8 +206,8 @@ addPostal(_,_).
 
 /*predicado principal*/
 arranca_motor:-
-    arranca_motor2([]).
-
+    arranca_motor2([]).    
+    
 evaluateSingular(Estate,FinalValue,Quality):-
     deal(Estate,FinalValue,_,_,_,Quality).
 
@@ -234,7 +218,7 @@ evaluateSingular(Estate,FinalValue,Quality):-
     get_average(Sample,Average),
     evaluate(Estate,Average,FinalValue,"Appreciate"),
     qualify_deal(ClientValue,FinalValue,Perc,Quality),
-    assertz(deal(Estate,Average,ClientValue,FinalValue,Perc,Quality)),
+    assertz(deal(Estate,FinalValue,ClientValue,Average,Perc,Quality)),
     changeState(Estate),
     resetFlag.
 
@@ -247,7 +231,7 @@ arranca_motor2(List):-
     get_average(Sample,Average),
     evaluate(Estate,Average,FinalValue,"Appreciate"),
     qualify_deal(ClientValue,FinalValue,Perc,Quality),
-    assertz(deal(Estate,Average,ClientValue,FinalValue,Perc,Quality)),
+    assertz(deal(Estate,FinalValue,ClientValue,Average,Perc,Quality)),
     changeState(Estate),
     resetFlag,
     box(Estate,ListBox),
@@ -282,15 +266,15 @@ getElementAtPos(0,_,[],_).
 getElementAtPos(Element,Pos,[Element|_],Pos).
 getElementAtPos(Element,Pos,[_|L],N):-
     N1 is N+1,
-    getElementAtPos(Element,Pos,L,N1).
+    getElementAtPos(Element,Pos,L,N1).    
 
 /*predicado auxiliar para pesquisar a lista de sufixos de cada prefixo*/
 incDev(YDev,YDev2):-
     flag(Mode),
     (Mode=="incrementa" ->
-    (YDev<0 ->
+    (YDev<0 -> 
     (Temp is 0-YDev,
-    YDev2 is Temp+1);
+    YDev2 is Temp+1); 
     YDev2 is YDev+1),
     NewMode = "decrementa";
     YDev2 is 0-YDev,
@@ -309,17 +293,17 @@ findSamples(EstateType,Tipology,[Prefix,Sufix],Sample,Result,XDev,YDev,List,Posi
     findSamples(EstateType,Tipology,[Prefix,Sufix],Sample,FinalList,XDev,YDev,List,Position).
 /*No caso de nao existerem imoveis no mesmo sufixo*/
 findSamples(EstateType,Tipology,[Prefix,Sufix],Sample,Result,XDev,YDev,List,Position):-
-    length( List, Length ),
+    length( List, Length ), 
     Temp is Position+YDev,
     ((Temp < 1 ; Temp > Length) ->
-    incDev(YDev,YDev2),
+    incDev(YDev,YDev2), 
     findSamples(EstateType,Tipology,[Prefix,Sufix],Sample,Result,XDev,YDev2,List,Position);
     getElementAtPos(Sufix2,Temp,List,1),
     estate(Estate,EstateType,_,_,Tipology,_,_,_,_,_,[Prefix,Sufix2],_,_,_),
     not(member(Estate,Result)),
     box(Estate,ListA),
     append([Result, ListA], FinalList),
-    incDev(YDev,YDev2),
+    incDev(YDev,YDev2), 
     findSamples(EstateType,Tipology,[Prefix,Sufix],Sample,FinalList,XDev,YDev2,List,Position)).
 /*No caso de nao existerem imoveis no mesmo prefixo*/
 findSamples(EstateType,Tipology,[Prefix,Sufix],_,Result,XDev,YDev,List,Pos):-
@@ -328,5 +312,5 @@ findSamples(EstateType,Tipology,[Prefix,Sufix],_,Result,XDev,YDev,List,Pos):-
     not(member(Estate,Result)),
     box(Estate,ListA),
     append([Result, ListA], FinalList),
-    incDev(XDev,XDev2),
+    incDev(XDev,XDev2), 
     findSamples(EstateType,Tipology,[Prefix,Sufix],_,FinalList,XDev2,YDev,List,Pos).
