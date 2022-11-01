@@ -1,6 +1,7 @@
 package pt.ipp.isep.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.kie.api.runtime.rule.ConsequenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -11,15 +12,16 @@ import pt.ipp.isep.model.ApiException;
 @ControllerAdvice
 public class ExceptionController {
 
-    @ExceptionHandler(ApiException.class)
-    public ResponseEntity<String> handle(ApiException apiException) {
-        log.warn(apiException.getMessage());
-        return ResponseEntity.status(apiException.getHttpStatus())
-                            .body(apiException.getMessage());
+    @ExceptionHandler({ApiException.class, ConsequenceException.class})
+    public ResponseEntity<String> handleApiException(ApiException ex) {
+        log.warn(ex.getMessage());
+        return ResponseEntity.status(ex.getHttpStatus())
+                            .body(ex.getMessage());
     }
 
-    public ResponseEntity handle(Exception ex) {
-        log.error(ex.getMessage());
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Void> handleException(Exception ex) {
+        log.error("Request failed", ex);
         return ResponseEntity.internalServerError().build();
     }
 }
