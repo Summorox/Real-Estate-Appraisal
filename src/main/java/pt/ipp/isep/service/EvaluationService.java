@@ -32,9 +32,15 @@ public class EvaluationService {
 
         //First try to get properties by the typology and postal code
         //If not found, second time try to get by just prefix postal code
-        List<Property> properties = propertyRepository.findAllByTypologyAndPostalCode(realEstate.getTypology(), realEstate.getPostalCode())
-                .orElseGet(() -> propertyRepository.findAllByTypologyAndPostalCodePrefixCode(realEstate.getTypology(), realEstate.getPostalCode().getPrefixCode())
-                        .orElseThrow(() -> new ApiException("Not found a base value for this typology and postal code", HttpStatus.NOT_FOUND)));
+        List<Property> properties = propertyRepository.findAllByTypologyAndPostalCodePrefixCodeAndPostalCodeSuffixCode(realEstate.getTypology(), realEstate.getPostalCode().getPrefixCode(), realEstate.getPostalCode().getSuffixCode());
+
+        if (properties.isEmpty()) {
+            properties = propertyRepository.findAllByTypologyAndPostalCodePrefixCode(realEstate.getTypology(), realEstate.getPostalCode().getPrefixCode());
+        }
+
+        if (properties.isEmpty()) {
+            throw new ApiException("Not found a base value for this typology and postal code", HttpStatus.NOT_FOUND);
+        }
 
         //Calculate average price to use as base price for evaluation
         long evaluationBasePrice = Property.calculateAveragePrice(properties);
@@ -53,8 +59,6 @@ public class EvaluationService {
         kieSession.fireAllRules();
 
         Collection<Evaluation> evaluationReturned = (Collection<Evaluation>) kieSession.getObjects(new ClassObjectFilter(Evaluation.class));
-
-
 
         Evaluation finalEvaluation = evaluationReturned.iterator().next();
         finalEvaluation.setPercQuality(calculateQualityPercentage(finalEvaluation));

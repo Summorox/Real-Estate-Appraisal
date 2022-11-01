@@ -1,8 +1,10 @@
 package pt.ipp.isep.sample;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import pt.ipp.isep.model.PostalCode;
 import pt.ipp.isep.model.Typology;
 
@@ -12,6 +14,8 @@ import java.util.List;
 @Getter
 @Entity
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Property {
 
     @Id
