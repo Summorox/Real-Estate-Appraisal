@@ -54,14 +54,15 @@ public class EvaluationService {
 
         Collection<Evaluation> evaluationReturned = (Collection<Evaluation>) kieSession.getObjects(new ClassObjectFilter(Evaluation.class));
 
-        // Dispose session
-        kieSession.dispose();
+
 
         Evaluation finalEvaluation = evaluationReturned.iterator().next();
         finalEvaluation.setPercQuality(calculateQualityPercentage(finalEvaluation));
         finalEvaluation.setBussinessQuality(calculateBusinessQuality(finalEvaluation));
         How.addEvaluation(realEstate.getId(),finalEvaluation);
 
+        // Dispose session
+        kieSession.dispose();
         return finalEvaluation;
     }
 
