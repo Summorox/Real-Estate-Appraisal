@@ -19,7 +19,6 @@ import pt.ipp.isep.model.Evaluation;
 import java.util.Calendar;
 import pt.ipp.isep.service.EvaluationService
 import pt.ipp.isep.model.RealEstateItem;
-import function pt.ipp.isep.utility.utility.helper
 import pt.ipp.isep.explanation.How
 import pt.ipp.isep.explanation.Justification
 import pt.ipp.isep.explanation.Fact;
@@ -50,9 +49,7 @@ then
             .build()
         ).build();
     How.addJustification($realEstate.getId(),j);
-    helper(drools,String.valueOf(currentYear()));
-    helper(drools,String.valueOf($evaluation.getAppraiseValue()));
-    helper(drools,String.valueOf(modifier));
+
     update($evaluation);
 end
 
@@ -74,8 +71,7 @@ then
                 .build()
             ).build();
         How.addJustification($realEstate.getId(),j);
-    helper(drools,String.valueOf($evaluation.getAppraiseValue()));
-    helper(drools,String.valueOf(modifier));
+
     update($evaluation);
 end
 
@@ -97,18 +93,17 @@ then
                         .build()
                     ).build();
                 How.addJustification($realEstate.getId(),j);
-        helper(drools,String.valueOf($evaluation.getAppraiseValue()));
-        helper(drools,String.valueOf(modifier));
+
         update($evaluation);
 end
 
 rule "r4: Value of the property should appreciate or depreciate accordingly per item that it has"
 lock-on-active true
 when
-	$realEstate: RealEstate($itemList: realEstateItemList, $itemList.size()>0)
+	$realEstate: RealEstate($itemList: realEstateItemList, $itemList !=null && $itemList.size()>0)
 	$evaluation: Evaluation()
 then
-    for(RealEstateItem item: $realEstate.getRealEstateItemList()){
+    for (RealEstateItem item: $realEstate.getRealEstateItemList()) {
         long modifier = evaluationService.appraiseItem(item,$evaluation.getBaseValue());
         long calculatedValue = $evaluation.getAppraiseValue()+modifier;
         $evaluation.setAppraiseValue(calculatedValue);
@@ -120,9 +115,10 @@ then
                                 .description("Because the property has the item: " + item.getItem().getDescription())
                                 .build()
                             ).build();
-                        How.addJustification($realEstate.getId(),j);
-        helper(drools,String.valueOf($evaluation.getAppraiseValue()));
-        helper(drools,String.valueOf(modifier));
-        update($evaluation);
+
+        How.addJustification($realEstate.getId(),j);
     }
+
+    update($evaluation);
+
 end
