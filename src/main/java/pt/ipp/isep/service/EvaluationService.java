@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import pt.ipp.isep.explanation.How;
 import pt.ipp.isep.model.*;
+import pt.ipp.isep.repository.EvaluationRepository;
 import pt.ipp.isep.repository.ItemRepository;
 import pt.ipp.isep.repository.PropertyRepository;
 import pt.ipp.isep.sample.Property;
@@ -23,6 +24,8 @@ public class EvaluationService {
 
     private PropertyRepository propertyRepository;
     private ItemRepository itemRepository;
+
+    EvaluationRepository evaluationRepository;
     private final KieContainer kieContainer = KieServices.Factory.get().getKieClasspathContainer();
 
 
@@ -63,7 +66,7 @@ public class EvaluationService {
         Evaluation finalEvaluation = evaluationReturned.iterator().next();
         finalEvaluation.setPercQuality(calculateQualityPercentage(finalEvaluation));
         finalEvaluation.setBussinessQuality(calculateBusinessQuality(finalEvaluation));
-        How.addEvaluation(realEstate.getId(),finalEvaluation);
+        evaluationRepository.addEvaluation(realEstate.getId(),finalEvaluation);
 
         // Dispose session
         kieSession.dispose();

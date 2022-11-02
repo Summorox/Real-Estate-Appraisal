@@ -10,7 +10,9 @@ import org.kie.api.runtime.KieSession;
 import pt.ipp.isep.explanation.Fact;
 import pt.ipp.isep.explanation.How;
 import pt.ipp.isep.explanation.Justification;
+import pt.ipp.isep.explanation.WhyNot;
 import pt.ipp.isep.model.*;
+import pt.ipp.isep.repository.EvaluationRepository;
 import pt.ipp.isep.service.EvaluationService;
 
 import java.util.ArrayList;
@@ -26,6 +28,8 @@ public class HowTest {
     private KieSession kieSession;
     private RealEstate testEstate;
     private Evaluation evaluation;
+
+    private EvaluationRepository evaluationRepository = new EvaluationRepository();
 
     @BeforeEach
     public void init() {
@@ -173,9 +177,9 @@ public class HowTest {
         Evaluation finalEvaluation = evaluationReturned.iterator().next();
         finalEvaluation.setPercQuality(0);
         finalEvaluation.setBussinessQuality(BussinessQuality.FAIR);
-        How.addEvaluation(testEstate.getId(),finalEvaluation);
+        evaluationRepository.addEvaluation(testEstate.getId(),finalEvaluation);
 
-        assertEquals(finalEvaluation,How.getEvaluations().get(testEstate.getId()));
+        assertEquals(finalEvaluation, evaluationRepository.getByRealEstateId(testEstate.getId()));
         String expectedHow = "The real estate number 123 was estimated in 15577,because based on the starting value 15000 we applied the following rules:\n" +
                 "\n" +
                 "\n" +
@@ -210,7 +214,7 @@ public class HowTest {
                 "\n" +
                 "Making the calculations, we estimated 15577\n" +
                 "According to the price determined by the client, we determine this deal as Fair";
-        String actualHow = How.getExplanationById(testEstate.getId());
+        String actualHow = new How().getExplanationById(testEstate.getId());
         assertEquals(expectedHow,actualHow);
         kieSession.dispose();
 
@@ -222,14 +226,14 @@ public class HowTest {
         Evaluation finalEvaluation = evaluationReturned.iterator().next();
         finalEvaluation.setPercQuality(0);
         finalEvaluation.setBussinessQuality(BussinessQuality.FAIR);
-        How.addEvaluation(testEstate.getId(),finalEvaluation);
+        evaluationRepository.addEvaluation(testEstate.getId(),finalEvaluation);
         String expectedWhyNot = "The real estate deal was rated as Fair\n" +
                 "\n" +
                 "Because the real estate estimated value is 0 above the client requested value 15577\n" +
                 "\n" +
                 "For it to be rated as  bad deal:\n" +
                 "The estimated value should be between 7944 and 12462";
-        String actualWhyNot = How.getWhyNot(testEstate.getId(),"bad");
+        String actualWhyNot = new WhyNot().getWhyNot(testEstate.getId(),"bad");
         assertEquals(expectedWhyNot,actualWhyNot);
         kieSession.dispose();
 

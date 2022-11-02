@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pt.ipp.isep.model.*;
+import pt.ipp.isep.repository.EvaluationRepository;
 import pt.ipp.isep.repository.ItemRepository;
 import pt.ipp.isep.repository.PropertyRepository;
 import pt.ipp.isep.sample.Property;
@@ -35,7 +36,7 @@ public class EvaluationServiceTest {
         when(itemRepository.findById(1)).thenReturn(Optional.of(ITEM_1));
         when(itemRepository.findById(2)).thenReturn(Optional.of(ITEM_2));
         when(itemRepository.findById(3)).thenReturn(Optional.of(ITEM_3));
-        service = new EvaluationService(propertyRepository,itemRepository);
+        service = new EvaluationService(propertyRepository,itemRepository, new EvaluationRepository());
 
         RealEstateItem item1 = RealEstateItem.builder()
                 .id(1)
