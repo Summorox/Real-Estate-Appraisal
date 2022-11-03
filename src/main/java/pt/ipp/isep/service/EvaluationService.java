@@ -25,7 +25,7 @@ public class EvaluationService {
     private PropertyRepository propertyRepository;
     private ItemRepository itemRepository;
 
-    EvaluationRepository evaluationRepository;
+    private final EvaluationRepository evaluationRepository = new EvaluationRepository();
     private final KieContainer kieContainer = KieServices.Factory.get().getKieClasspathContainer();
 
 
