@@ -24,7 +24,7 @@ public class EvaluationController {
         return new How().getExplanationById(id);
     }
 
-    @GetMapping("whynot/{id}/{quality}")
+    @GetMapping("/whynot/{id}/{quality}")
     public String geWhyNotByIdAndQuality(@PathVariable String id, @PathVariable String quality){
         return new WhyNot().getWhyNot(id,quality);
     }
