@@ -24,14 +24,14 @@ start_system(Request):-
     member(method(post), Request), !,
     http_read_json_dict(Request, Input),
     format(user_output,'Request received:~p~n with body:~p~n~n',[Request,Input]),
-    (Input.Mode == "evaluate" ->(
+    (Input._ == "evaluate" ->(
         load_estate(Input),
         evaluateSingular(Input.id,_,_),
         generate_output_evaluate(Output,Input.id) -> !,
         reply_json_dict(Output);
         atom_json_dict('{"message":"Error generating output"}', Error,_),
         reply_json_dict(Error,[status([400])]));
-        ((Input.Mode == "how" ->
+        ((Input._ == "how" ->
             how(Input.id,String);
             why_not(Input.id,Input.question,String)),
             Output = json{reason:String},

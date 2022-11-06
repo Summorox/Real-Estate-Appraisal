@@ -5,10 +5,59 @@
 :- dynamic postalCodeList/2.
 :- consult('KB').
 
-teste(S):- format("testando ~w a ver. ~n nao da", S).
 flag("decrementa").
 postalCodeList(4400,[130,121,133,140]).
 
+/*mostra os detalhes de todos os imoveis*/
+show_all_estates:-
+    show_all_estates2([]).
+show_all_estates2(List):-
+    estate(Estate,_,_,_,_,_,_,_,_,_,_,_,_,_),
+    not(member(Estate,List)),
+    show_estate(Estate),nl,
+    append([Estate,List],FinalList),
+    show_all_estates2(FinalList).
+
+/*mostra os detalhes de um determinado imovel*/
+show_estate(Num):-
+    estate(Num,PropertyType,Condition,Area,Typology,ConstYear,EnergyCert,ParkSlots,BathRooms,Address,PostalCode,ClientValue,_,_),
+    swritef(EstateRep,'Estate %w: \nProperty Type - %w \nTipology - %w \nCondition - %w \nGrossArea - %w \nConstruction Year - %w \nEnergy Certificate - %w \nPark slots - %w \nNumber of BathRooms - %w \nAddress - %w \nPostalCode - %w \nClient Price - %w \n',[Num,PropertyType,Typology,Condition,Area,ConstYear,EnergyCert,ParkSlots,BathRooms,Address,PostalCode,ClientValue]),
+    write(EstateRep).
+
+/*mostra os detalhes de todos os negocios*/
+show_all_deals:-
+    show_all_deals2([]).
+show_all_deals2(List):-
+    deal(Estate,Q,W,Valor,R,T),
+    Valor > 0,
+    not(member(Estate,List)),
+    swritef(Deal,'deal(Estate: %w, EstimatedValue: %w, Client Value: %w, Base Value: %w, Perc: %w, Quality: %w)',[Estate,Q,W,Valor,R,T]),
+    write(Deal),nl,
+    append([Estate,List],FinalList),
+    show_all_deals2(FinalList).
+
+/*mostra todos os factos gerados*/
+show_all_facts:-
+    show_all_facts2([]).
+show_all_facts2(List):-
+    deal(Estate,_,_,_,_,_),
+    not(member(Estate,List)),
+    show_facts(Estate),
+    append([Estate,List],FinalList),
+    show_all_facts2(FinalList).
+
+/*mostra os factos gerados durante a avaliação de um determinado imovel*/
+show_facts(Num):-
+    show_facts2(Num,[]).
+show_facts2(Num,List):-
+    appreciation(Num,Element,Value),
+    Value2 is abs(Value),
+    not(member(Element,List)),
+    (Value>0 -> Temp = "increased";Temp = "decreased"),
+    swritef(Frase,'The real estate %w because of the %w had its price %w by %w',[Num,Element,Temp,Value2]),
+    write(Frase),nl,
+    append([Element,List],FinalList),
+    show_facts2(Num,FinalList).
 
 /*predicado que carrega base conhecimento*/
 carrega_bc:-
@@ -73,7 +122,7 @@ how(Estate,FinalString):-
     Temp2 is round(BaseValue),
     getData(Estate,[],_,0,Final),
     swritef(FinalString,'The real estate number %w was estimated in %w , because based on the started value %w we applied the following rules: %w. According to the value required by the client (%w) and the estimated value calculated before, we rate this deal as %w!',[Estate,Temp1,Temp2,Final,ClientValue,Quality]).
-how(Estate,FinalString):-
+how(_,FinalString):-
     FinalString = 'That estate doesnt exist or was not evaluated.'.    
 
 
