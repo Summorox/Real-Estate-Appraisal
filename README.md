@@ -10,3 +10,12 @@ Use the Maven to install API.
 mvn clean install
 ```
 
+# Run the Application
+
+```bash
+cd target
+```
+
+```bash
+ java -jar evaluation-1.0.jar
+```
