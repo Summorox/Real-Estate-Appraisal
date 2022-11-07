@@ -1,0 +1,120 @@
+<!doctype html>
+<html ng-app="app">
+<head>
+  <title>Hello AngularJS</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
+  <script >
+    angular.module('app', [])
+            .controller('Hello', function($scope, $http) {
+              $http.get('http://localhost:8080/item?groupId=2').
+              then(function(response) {
+                $scope.greeting = response.data;
+              });
+            });
+
+
+
+    // angular.module('app', [])
+    //         .controller('Hello', function($scope, $http) {
+    //           $http.post('http://localhost:8080/evaluation', ).
+    //           then(function(response) {
+    //             $scope.greeting = response.data;
+    //           });
+    //         });
+
+
+
+
+      //const checkoutForm = new FormData();
+
+      function onSubmit() {
+        console.warn('Your order has been submitted', this.checkoutForm.value);
+        this.checkoutForm.reset();
+      };
+
+  </script>
+</head>
+
+<body>
+<div ng-controller="Hello">
+  <p>The ID is {{greeting[0].id}}</p>
+  <p>The content is {{greeting[0].groupName}}</p>
+</div>
+
+<form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
+  <div class="row g-5 ">
+
+    <div class="col-2">
+      <label for="realEstateType" class="form-label">Type</label>
+      <select class="form-select" id="realEstateType" formControlName="realEstateType">
+        <option selected>Choose...</option>
+        <option value="1">Apartmento</option>
+        <option value="2">Casa</option>
+      </select>
+    </div>
+    <div class="col-2">
+      <label for="dependentGrossArea" class="form-label">Dependent Gross Area</label>
+      <input type="text" class="form-control" id="dependentGrossArea" formControlName="dependentGrossArea">
+    </div>
+
+    <div class="col-2">
+      <label for="typology" class="form-label">Typology</label>
+      <select class="form-select" id="typology" formControlName="typology" aria-label="Default select example">
+        <option selected>Choose...</option>
+        <option value="T0">T0</option>
+        <option value="T1">T1</option>
+        <option value="T2">T2</option>
+        <option value="T3">T3</option>
+        <option value="T4">T4</option>
+        <option value="T5">T5</option>
+        <option value="T6">T6</option>
+      </select>
+    </div>
+    <div class="col-2">
+      <label for="constructionYear" class="form-label">Construction Year</label>
+      <input type="text" class="form-control" id="constructionYear">
+    </div>
+
+    <div class="col-2">
+      <label for="parkingSlot" class="form-label">Parking Slot</label>
+      <input type="text" class="form-control" id="parkingSlot">
+    </div>
+
+    <div class="col-2">
+      <label for="numberBathrooms" class="form-label">Nº Bathrroms</label>
+      <input type="text" class="form-control" id="numberBathrooms">
+    </div>
+
+    <div class="col-2">
+      <label for="postalCode" class="form-label">Postal Code</label>
+      <input type="text" class="form-control" id="postalCode">
+    </div>
+
+    <div class="col-2">
+      <label for="clientValue" class="form-label">Client Suggested Price</label>
+      <input type="text" class="form-control" id="clientValue">
+    </div>
+
+    <div class="col-2">
+      <h6> Exposed sun</h6>
+      <div class="form-check">
+        <input class="form-check-input" name="condition" type="radio" value="11" id="conditionEast">
+        <label class="form-check-label" for="conditionEast">
+          East
+        </label>
+
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" name="condition" type="radio" value="12" id="conditionWest">
+        <label class="form-check-label" for="conditionWest">
+          West
+        </label>
+      </div>
+    </div>
+  </div>
+  <hr class="my-4">
+
+  <button class="w-100 btn btn-primary btn-lg"  type="submit">Evaluate</button>
+</form>
+</body>
+</html>
