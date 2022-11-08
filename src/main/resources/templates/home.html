@@ -32,32 +32,6 @@
 
 <script>
 
-    // const raw = JSON.stringify({
-    //     "id": "string",
-    //     "realEstateType": "APARTMENT",
-    //     "dependentGrossArea": 60,
-    //     "typology": "T1",
-    //     "constructionYear": 2020,
-    //     "parkingSlot": 0,
-    //     "numberBathrooms": 1,
-    //     "address": "string",
-    //     "postalCode": {
-    //         "prefixCode": "4200",
-    //         "suffixCode": "125"
-    //     },
-    //     "clientValue": 150000,
-    //     "realEstateItemList": [
-    //         {
-    //             "item": {
-    //                 "id": 1
-    //             }
-    //         }
-    //     ]
-    // });
-
-
-
-
     const {createApp} = Vue
 
 
@@ -157,11 +131,11 @@
 
 
     <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="evaluationModal" tabindex="-1" role="dialog" aria-labelledby="evaluationModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Evaluation</h5>
+            <h5 class="modal-title" id="evaluationModalLabel">Evaluation</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -169,16 +143,16 @@
 
           <div class="modal-body">
             <label for="recipient-name" class="col-form-label">Appraise Value:</label>
-            <input type="text" class="form-control" id="appraiseValue" disabled>
+            <input type="text" class="form-control" id="appraiseValue" v-model="evaluation.appraiseValue" disabled>
 
             <label for="recipient-name" class="col-form-label">Base Value:</label>
-            <input type="text" class="form-control" id="baseValue" disabled>
+            <input type="text" class="form-control" id="baseValue" v-model="evaluation.baseValue" disabled>
 
             <label for="recipient-name" class="col-form-label">Quality perc:</label>
-            <input type="text" class="form-control" id="percQuality" disabled>
+            <input type="text" class="form-control" id="percQuality" v-model="evaluation.percQuality" disabled>
 
             <label for="recipient-name" class="col-form-label">Bussiness Quality:</label>
-            <input type="text" class="form-control" id="bussinessQuality" disabled>
+            <input type="text" class="form-control" id="bussinessQuality" v-model="evaluation.bussinessQuality" disabled>
           </div>
 
           <div class="modal-footer">
@@ -191,6 +165,7 @@
         data() {
             return {
                 realEstate: {
+                    id: 0,
                     realEstateType: '',
                     dependentGrossArea: '',
                     typology: '',
@@ -206,6 +181,12 @@
                     realEstateItemList: [ ]
                 },
                 checkedItems: [ ],
+                evaluation: {
+                    appraiseValue: '',
+                    baseValue: '',
+                    percQuality: '',
+                    bussinessQuality: ''
+                }
             }
         },
         methods: {
@@ -218,6 +199,8 @@
                     }
                     this.realEstate.realEstateItemList.push(item);
                 }
+
+                this.realEstate.id++;
 
                 const requestOptions = {
                     method: 'POST',
@@ -232,12 +215,8 @@
                 fetch("http://localhost:8080/evaluation", requestOptions)
                     .then(response => response.json())
                     .then(result => {
-                        console.log(result);
-                        $('#appraiseValue').val(result.appraiseValue);
-                        $('#baseValue').val(result.baseValue);
-                        $('#percQuality').val(result.percQuality);
-                        $('#bussinessQuality').val(result.bussinessQuality)
-                        $('#exampleModal').modal('show');
+                        this.evaluation = result;
+                         $('#evaluationModal').modal('show');
                     })
                     .catch(error => console.log('error', error));
 
