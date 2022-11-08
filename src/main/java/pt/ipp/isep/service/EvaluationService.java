@@ -7,7 +7,6 @@ import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import pt.ipp.isep.explanation.How;
 import pt.ipp.isep.model.*;
 import pt.ipp.isep.repository.EvaluationRepository;
 import pt.ipp.isep.repository.ItemRepository;

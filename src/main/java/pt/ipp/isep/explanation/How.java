@@ -1,6 +1,5 @@
 package pt.ipp.isep.explanation;
 
-import pt.ipp.isep.model.BussinessQuality;
 import pt.ipp.isep.model.Evaluation;
 import pt.ipp.isep.repository.EvaluationRepository;
 

@@ -1,6 +1,9 @@
 package pt.ipp.isep.explanation;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter

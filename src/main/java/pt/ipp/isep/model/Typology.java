@@ -1,7 +1,6 @@
 package pt.ipp.isep.model;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public enum Typology {
