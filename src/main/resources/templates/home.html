@@ -15,6 +15,7 @@
         crossorigin="anonymous"></script>
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
+
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
         integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
         crossorigin="anonymous"></script>
@@ -54,14 +55,7 @@
     //     ]
     // });
 
-    const requestOptions = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(this.realEstate),
-        mode: "same-origin"
-    };
+
 
 
     const {createApp} = Vue
@@ -80,8 +74,8 @@
             <div class="row g-5 ">
 
                 <div class="col-2">
-                    <label for="tipo" class="form-label">Type</label>
-                    <select class="form-select" id="tipo" v-model="realEstateType">
+                    <label for="realEstateType" class="form-label">Type</label>
+                    <select class="form-select" id="realEstateType" v-model="realEstate.realEstateType">
                         <option selected>Choose...</option>
                         <option value="1">Apartmento</option>
                         <option value="2">Casa</option>
@@ -89,12 +83,12 @@
                 </div>
                 <div class="col-2">
                     <label for="areaDependente" class="form-label">Dependent Gross Area</label>
-                    <input type="text" class="form-control" v-model="dependentGrossArea" >
+                    <input type="text" class="form-control" v-model="realEstate.dependentGrossArea" >
                 </div>
 
                 <div class="col-2">
                     <label for="bedrooms" class="form-label">Typology</label>
-                    <select class="form-select" id="bedrooms" v-model="typology" aria-label="Default select example">
+                    <select class="form-select" id="bedrooms" v-model="realEstate.typology" aria-label="Default select example">
                         <option selected>Choose...</option>
                         <option value="T0">T0</option>
                         <option value="T1">T1</option>
@@ -107,40 +101,48 @@
                 </div>
                 <div class="col-2">
                     <label for="constructionYear" class="form-label">Construction Year</label>
-                    <input type="text" class="form-control" v-model="constructionYear">
+                    <input type="text" class="form-control" v-model="realEstate.constructionYear">
                 </div>
 
                 <div class="col-2">
                     <label for="parkingSlot" class="form-label">Parking Slot</label>
-                    <input type="text" class="form-control" v-model="parkingSlot">
+                    <input type="text" class="form-control" v-model="realEstate.parkingSlot">
                 </div>
 
                 <div class="col-2">
                     <label for="numberBathrooms" class="form-label">Nº Bathrroms</label>
-                    <input type="text" class="form-control" v-model="numberBathrooms">
+                    <input type="text" class="form-control" v-model="realEstate.numberBathrooms">
                 </div>
 
                 <div class="col-2">
                     <label for="postalCode" class="form-label">Postal Code</label>
-                    <input type="text" class="form-control" v-model="postalCode">
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" class="form-control" v-model="realEstate.postalCode.prefixCode">
+                        </div>
+                        -
+                        <div class="col">
+                            <input type="text" class="form-control" v-model="realEstate.postalCode.suffixCode">
+                        </div>
+                    </div>
                 </div>
 
                 <div class="col-2">
                     <label for="clientValue" class="form-label">Client Suggested Price</label>
-                    <input type="text" class="form-control" v-model="clientValue">
+                    <input type="text" class="form-control" v-model="realEstate.clientValue">
                 </div>
 
                 <div class="col-2">
                     <h6> Exposed sun</h6>
                     <div class="form-check">
-                        <input class="form-check-input" name="condition" type="radio" value="11" v-model="conditionEast">
+                        <input class="form-check-input" name="condition" type="radio" value="11" v-model="checkedItems">
                         <label class="form-check-label" for="conditionEast">
                             East
                         </label>
 
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" name="condition" type="radio" value="12" v-model="conditionWest">
+                        <input class="form-check-input" name="condition" type="radio" value="12" v-model="checkedItems">
                         <label class="form-check-label" for="conditionWest">
                             West
                         </label>
@@ -188,28 +190,58 @@
        `,
         data() {
             return {
-                dependentGrossArea: '',
-                typology: ''
+                realEstate: {
+                    realEstateType: '',
+                    dependentGrossArea: '',
+                    typology: '',
+                    constructionYear: '',
+                    parkingSlot: '',
+                    numberBathrooms: '',
+                    address: '',
+                    postalCode: {
+                        prefixCode: '',
+                        suffixCode: ''
+                    },
+                    clientValue: '',
+                    realEstateItemList: [ ]
+                },
+                checkedItems: [ ],
             }
         },
         methods: {
-            save: () => {
-                console.log("area " + this.dependentGrossArea);
-                console.log("typ " + this.typology)
-                //console.log(requestOptions.body)
-                // fetch("http://localhost:8080/evaluation", requestOptions)
-                //     .then(response => response.json())
-                //     .then(result => {
-                //         console.log(result);
-                //         $('#appraiseValue').val(result.appraiseValue);
-                //         $('#baseValue').val(result.baseValue);
-                //         $('#percQuality').val(result.percQuality);
-                //         $('#bussinessQuality').val(result.bussinessQuality)
-                //
-                //     })
-                //     .catch(error => console.log('error', error));
-                //
-                //     $('#exampleModal').modal('show');
+            save() {
+                for (let i = 0; this.checkedItems.length - 1 > i; i++) {
+                    let item = {
+                                    item: {
+                                            id: this.checkedItems[i]
+                                        }
+                    }
+                    this.realEstate.realEstateItemList.push(item);
+                }
+
+                const requestOptions = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(this.realEstate),
+                    mode: "same-origin"
+                };
+
+
+                fetch("http://localhost:8080/evaluation", requestOptions)
+                    .then(response => response.json())
+                    .then(result => {
+                        console.log(result);
+                        $('#appraiseValue').val(result.appraiseValue);
+                        $('#baseValue').val(result.baseValue);
+                        $('#percQuality').val(result.percQuality);
+                        $('#bussinessQuality').val(result.bussinessQuality)
+                        $('#exampleModal').modal('show');
+                    })
+                    .catch(error => console.log('error', error));
+
+                this.realEstate.realEstateItemList = []
             }
         }
     }).mount('#app');

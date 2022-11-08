@@ -1,6 +1,6 @@
 package pt.ipp.isep.repository;
 
-import lombok.Getter;
+
 import pt.ipp.isep.model.Evaluation;
 
 import java.util.HashMap;
