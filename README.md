@@ -19,3 +19,5 @@ cd target
 ```bash
  java -jar evaluation-1.0.jar
 ```
+
+Now the Application is running and see the home page on <http://localhost:8080/home>
