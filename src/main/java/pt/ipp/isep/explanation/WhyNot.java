@@ -11,7 +11,7 @@ public class WhyNot {
         StringBuilder builder = new StringBuilder();
         Evaluation evaluation = evaluationRepository.getByRealEstateId(id);
         long clientValue = Math.round(evaluation.getAppraiseValue()*(1-evaluation.getPercQuality()));
-        if(quality.equals(evaluation.getBussinessQuality().getDescription())){
+        if(quality.equalsIgnoreCase(evaluation.getBussinessQuality().getDescription())){
             builder.append("This real estate deal is already rated as " + quality);
             return builder.toString();
         }
@@ -29,29 +29,29 @@ public class WhyNot {
         builder.append("\n\n");
 
         builder.append("For it to be rated as  " + quality + " deal:");
-        if(quality.equals(BussinessQuality.AWFUL.toString().toLowerCase())){
+        if(quality.equalsIgnoreCase(BussinessQuality.AWFUL.toString())){
             builder.append("\nThe estimated value should be below ");
             builder.append(Math.round(evaluation.getAppraiseValue()*(1-0.5)));
         }
-        if(quality.equals(BussinessQuality.BAD.toString().toLowerCase())){
+        if(quality.equalsIgnoreCase(BussinessQuality.BAD.toString())){
             builder.append("\nThe estimated value should be between ");
             builder.append(Math.round(evaluation.getAppraiseValue()*(1-0.49)));
             builder.append(" and ");
             builder.append(Math.round(evaluation.getAppraiseValue()*(1-0.20)));
         }
-        if(quality.equals(BussinessQuality.FAIR.toString().toLowerCase())){
+        if(quality.equalsIgnoreCase(BussinessQuality.FAIR.toString())){
             builder.append("\nThe estimated value should be between ");
             builder.append(Math.round(evaluation.getAppraiseValue()*(1-0.19)));
             builder.append(" and ");
             builder.append(Math.round(evaluation.getAppraiseValue()*(1+0.19)));
         }
-        if(quality.equals(BussinessQuality.GOOD.toString().toLowerCase())){
+        if(quality.equalsIgnoreCase(BussinessQuality.GOOD.toString())){
             builder.append("\nThe estimated value should be between ");
             builder.append(Math.round(evaluation.getAppraiseValue()*(1+0.20)));
             builder.append(" and ");
             builder.append(Math.round(evaluation.getAppraiseValue()*(1+0.49)));
         }
-        if(quality.equals(BussinessQuality.EXCELLENT.toString().toLowerCase())){
+        if(quality.equalsIgnoreCase(BussinessQuality.EXCELLENT.toString())){
             builder.append("\nThe estimated value should be above ");
             builder.append(Math.round(evaluation.getAppraiseValue()*(1+0.50)));
         }
