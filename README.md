@@ -11,8 +11,8 @@ This repository contains a group project developed as part of a master's program
 - **User Interface**: A simple web interface allows users to input property details and receive appraisal results.
 
 ## Technologies Used
-Languages: Java, Prolog, HTML
-Technologies: Drools, Spring Boot
+**Languages**: Java, Prolog, HTML  
+**Technologies**: Drools, Spring Boot
 
 ## Members
 | Name | Institutional Email | 
