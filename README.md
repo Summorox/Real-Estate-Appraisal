@@ -10,6 +10,10 @@ This repository contains a group project developed as part of a master's program
 - **Dual Rule-Based Systems**: The rule-based system has been implemented in two distinct ways: one using Prolog and the other using Drools. Both implementations can be connected to a frontend via API, enabling a flexible appraisal interface.
 - **User Interface**: A simple web interface allows users to input property details and receive appraisal results.
 
+## Technologies Used
+Languages: Java, Prolog, HTML
+Technologies: Drools, Spring Boot
+
 ## Members
 | Name | Institutional Email | 
 |-----------------|-----------------|
