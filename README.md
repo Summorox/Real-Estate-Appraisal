@@ -13,8 +13,8 @@ This repository contains a group project developed as part of a master's program
 ## Members
 | Name | Institutional Email | 
 |-----------------|-----------------|
-| Bruno Calisto    | 1181426@isep.ipp.pt    | 
 | Jorge Felício    | 1181244@isep.ipp.pt    | 
+| Bruno Calisto    | 1181426@isep.ipp.pt    | 
 | Alessandro Cunha    | 1220183@isep.ipp.pt    | 
 | Gabriel Ribeiro    | 1220189@isep.ipp.pt    | 
 
