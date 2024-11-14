@@ -4,20 +4,28 @@ This repository contains a group project developed as part of a master's program
 
 ## Features
 
-- **Expert System Logic**: Utilizes rules and logical structures to evaluate property characteristics.
+- **Expert System Logic**: Uses a rule-based system to evaluate and score property characteristics, to simulate the decision-making process of an expert.
 - **Adaptable Rules**: The values within the rule set can be easily adjusted to account for regional variations in property prices.
 - **Extensible Property Attributes**: New property attributes can be added to the database with only minor adjustments, allowing for the addition of attribute-price variance pairs as needed.
-- **Dual Rule-Based Systems**: The rule-based system has been implemented in two distinct ways: one using Prolog and the other using Drools. Both implementations can be connected as APIs to a frontend, enabling a flexible, rule-driven appraisal interface.
+- **Dual Rule-Based Systems**: The rule-based system has been implemented in two distinct ways: one using Prolog and the other using Drools. Both implementations can be connected to a frontend via API, enabling a flexible appraisal interface.
 - **User Interface**: A simple web interface allows users to input property details and receive appraisal results.
 
-#  Installation 
+## Members
+| Name | Institutional Email | 
+|-----------------|-----------------|
+| Bruno Calisto    | 1181426@isep.ipp.pt    | 
+| Jorge Felício    | 1181244@isep.ipp.pt    | 
+| Alessandro Cunha    | 1220183@isep.ipp.pt    | 
+| Gabriel Ribeiro    | 1220189@isep.ipp.pt    | 
+
+##  Installation 
 
 Navigate to the project directory and install dependencies:
 ```bash
 mvn clean install
 ```
 
-# Run the Application
+## Run the Application
 1. Compile and start the application by navigating to the target directory:
 ```bash
 cd target
