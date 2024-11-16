@@ -1,4 +1,4 @@
-# Real State Appraisal
+# Real Estate Appraisal Rule-Based System
 ## Overview
 This repository contains a group project developed as part of a master's program in Artificial Intelligence at ISEP, completed in 2022. The project focuses on implementing expert systems and rule-based methodologies to assess real estate values based on their characteristics, providing a foundation for understanding and automating appraisal processes in a structured environment.
 
